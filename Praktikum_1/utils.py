@@ -1,4 +1,4 @@
-cities = ['Or', 'Ne', 'Ze', 'Ia', 'Ar', 'Si', 'Fa',
+cities = [['Or', 'Ne', 'Ze', 'Ia', 'Ar', 'Si', 'Fa',
  'Va', 'Ri', 'Ti', 'Lu', 'Pi', 'Ur', 'Hi',
  'Me', 'Bu', 'Dr', 'Ef', 'Cr', 'Gi'],
 [
@@ -14,7 +14,7 @@ cities = ['Or', 'Ne', 'Ze', 'Ia', 'Ar', 'Si', 'Fa',
    ('Pi', 'Bu', 101), ('Bu', 'Gi', 90),
    ('Bu', 'Ur', 85), ('Ur', 'Hi', 98),
    ('Hi', 'Ef', 86)
-]
+]]
 
 def getNode(name, l):
    return next(( i for i in l if i.name == name), -1)
