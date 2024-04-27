@@ -18,4 +18,5 @@ romania = Graph( ['Or', 'Ne', 'Ze', 'Ia', 'Ar', 'Si', 'Fa',
    ('Hi', 'Ef', 86)
 ] )
 
-romania.print()
+for node in romania.nodes:
+   node.printNode()
