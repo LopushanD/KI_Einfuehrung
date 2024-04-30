@@ -5,11 +5,10 @@ from utils import *
 class Node:
    """Each node includes edges that connect nodes"""
    def __init__(self, name):
-       self.parent = 0 #cost of the way until now
+       self.parent = None # Parent Node
        self.name = name #name of our node
        self.edges = [] # options where to go : (ourNode,otherNode,cost)
-       self.value = 0 # ??
-       self.explored=False
+       self.value = 0 # cost of the path
        
    def printNode(self):
       print("name, value, parent")
@@ -27,7 +26,7 @@ class Edge:
    def __init__(self, edge):
       self.start = edge[0]
       self.end = edge[1]
-      self.value = edge[2]
+      self.value:int = edge[2]
    
    def printEdge(self):
       print(self.start.name,end=' -> ')
@@ -61,24 +60,39 @@ class Graph:
       print(t)
             
          
-def bfs(cities:Graph,start:Node,end:Node,tracker:Tracker) -> int: # type: ignore # later change return value to int
-    if(start.name == end.name):
-        return start.parent
-    # start.explored = True
-    nextNode:Node = start
-    q = Queue()
-    q.fifoEnque(start)
-    while(q.fifoNotEmpty()):
-        nextNode = q.fifoDeque()
-        nextNode.explored = True
-        # tracker.update(nextNode)
-        for edge in nextNode.edges:
-            
-            q.fifoEnque(edge.end)
-        
-    
-    return -1  
-    
+def bfs(start:Node,end:Node) -> int: # type: ignore 
+   if(start.name == end.name):
+      return start.value
+   # start.explored = True
+   currentNode:Node = start
+   currentNode.parent = currentNode
+   exploredWays = []
+   q = Queue()
+   bestWay = [0xffffffff,end]
+   q.fifoEnque(currentNode)
+   while(q.fifoNotEmpty()):
+      currentNode = q.fifoDeque()
+      exploredWays.append((currentNode.parent,currentNode,currentNode.value+currentNode.parent.value))
+      #currentNode.printNode()
+      if(currentNode.name == end.name):
+         if(currentNode.value < bestWay[0]):
+            bestWay[1] = currentNode
+            bestWay[0] = currentNode.value
+      else:
+         
+         for edge in currentNode.edges:
+            #if(edge.name == currentNode.parent.)
+            if(isNotCycle(currentNode,edge.end,currentNode.value+edge.value,exploredWays)):
+               
+               edge.end.value=currentNode.value+edge.value
+               edge.end.parent = currentNode
+               q.fifoEnque(edge.end)
+               #currentNode.parent.value = 0
+               
+   return bestWay[0]  
+  
+def dfs(start:Node,end:Node) -> int: # type: ignore
+   pass
     
                    
             

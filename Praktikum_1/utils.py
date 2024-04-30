@@ -37,7 +37,7 @@ class Queue:
         return False
             
     def fifoDeque(self) -> object:
-        self.fifo.pop()
+        return self.fifo.pop()
     
     def lifoEnque(self,element:object) -> bool:
         self.lifo.insert(0,element)
@@ -51,8 +51,14 @@ class Queue:
     
     def lifoDeque(self) -> object:
         return self.lifo.pop(0)
-        
     
+def isNotCycle(parent,child,totalCostChild,exploredWays:list[tuple]) -> bool:
+    for way in exploredWays:
+        oneCity,otherCity,exploredPairCost = way
+        if( ( (parent.name == oneCity.name and child.name == otherCity.name) or (parent.name == otherCity.name and child.name ==oneCity.name) ) and totalCostChild>=exploredPairCost ):
+            return False
+    return True
+        
     # def prioEnque(self,priority:int,element:object) -> bool:
     #implement when it gets clear what to do with it      
     

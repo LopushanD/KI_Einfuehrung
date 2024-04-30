@@ -1,5 +1,18 @@
 from graph import *
 
+"""
+   Problems:
+      BFS doesn't find optimal solution, only 2nd optimal. Presumably it has to do with the fact that python works with references and
+      nodes get value from other branch searches and that's why they don't pass cycle detection check.
+      
+      after we go through path Bu->Fa->Si->Ri ... the Ri value gets overwritten (its 390) and it is never changed to proper value 198.
+      
+      the problem appears only if we look past Si (like Ze or Ti). If we look for Si, then everything is correct and Path is  278 (optimal one)
+      
+      different approaches were tried: change complex structures (like node.parent.value) to basic ones (like int), reseting previous Nodes
+      after we visit them
+"""
+
 romania = Graph( ['Or', 'Ne', 'Ze', 'Ia', 'Ar', 'Si', 'Fa',
  'Va', 'Ri', 'Ti', 'Lu', 'Pi', 'Ur', 'Hi',
  'Me', 'Bu', 'Dr', 'Ef', 'Cr', 'Gi'],
@@ -18,5 +31,21 @@ romania = Graph( ['Or', 'Ne', 'Ze', 'Ia', 'Ar', 'Si', 'Fa',
    ('Hi', 'Ef', 86)
 ] )
 
+start = "Bu"
+end = "Ti"
+startNodeIndex = 0
+endNodeIndex = 0
+
 for node in romania.nodes:
-   node.printNode()
+   if(node.name == start):
+      break
+   startNodeIndex+=1
+
+for node in romania.nodes:
+   if(node.name == end):
+      break
+   endNodeIndex+=1
+
+romania.print()
+
+print(f"The Lowest Cost way from {start} to {end} is: "+str(bfs(romania.nodes[startNodeIndex],romania.nodes[endNodeIndex])))
