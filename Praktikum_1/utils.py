@@ -51,7 +51,16 @@ class Queue:
     
     def lifoDeque(self) -> object:
         return self.lifo.pop(0)
-    
+
+def printWay(node:object)->None:
+    nextNode = 0
+    print("the way is: ",end='')
+    while node.parent is not None:
+        print(node.name+" -> ",end='')
+        node = node.parent
+    print(node.name)
+        
+
 def isNotCycle(parent,child,totalCostChild,exploredWays:list[tuple]) -> bool:
     for way in exploredWays:
         oneCity,otherCity,exploredPairCost = way

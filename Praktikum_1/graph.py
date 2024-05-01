@@ -66,33 +66,56 @@ def bfs(start:Node,end:Node) -> int: # type: ignore
    # start.explored = True
    currentNode:Node = start
    currentNode.parent = currentNode
+   minCosts = {start.name: 0}  # Dictionary to store the minimum costs to each node
    exploredWays = []
    q = Queue()
-   bestWay = [0xffffffff,end]
+   #bestWay = [0xffffffff,end]
    q.fifoEnque(currentNode)
    while(q.fifoNotEmpty()):
       currentNode = q.fifoDeque()
-      exploredWays.append((currentNode.parent,currentNode,currentNode.value+currentNode.parent.value))
-      #currentNode.printNode()
-      if(currentNode.name == end.name):
-         if(currentNode.value < bestWay[0]):
-            bestWay[1] = currentNode
-            bestWay[0] = currentNode.value
-      else:
-         
-         for edge in currentNode.edges:
-            #if(edge.name == currentNode.parent.)
-            if(isNotCycle(currentNode,edge.end,currentNode.value+edge.value,exploredWays)):
+      print(currentNode.name)
+      current_cost = minCosts[currentNode.name]
+      
+      for edge in currentNode.edges:
+         nextNode = edge.end
+         newCost = current_cost + edge.value
+         if(isNotCycle(currentNode,nextNode,newCost,exploredWays)):
+            
+            if nextNode.name not in minCosts or newCost < minCosts[nextNode.name]:
+                     minCosts[nextNode.name] = newCost
+                     nextNode.parent = currentNode  
+            exploredWays.append((currentNode,nextNode,newCost))
+            q.fifoEnque(nextNode)
+      
                
-               edge.end.value=currentNode.value+edge.value
-               edge.end.parent = currentNode
-               q.fifoEnque(edge.end)
-               #currentNode.parent.value = 0
-               
-   return bestWay[0]  
+   return  minCosts[end.name]
   
 def dfs(start:Node,end:Node) -> int: # type: ignore
-   pass
+   if(start.name == end.name):
+      return start.value
+   currentNode:Node = start
+   currentNode.parent = currentNode
+   minCosts = {start.name: 0}  # Dictionary to store the minimum costs to each node
+   exploredWays = []
+   q = Queue()
+   q.lifoEnque(currentNode)
+   while(q.lifoNotEmpty()):
+      currentNode = q.lifoDeque()
+      print(currentNode.name)
+      current_cost = minCosts[currentNode.name]
+
+      for edge in currentNode.edges:
+         nextNode = edge.end
+         newCost = current_cost + edge.value
+         if(isNotCycle(currentNode,nextNode,newCost,exploredWays)):
+            
+            if nextNode.name not in minCosts or newCost < minCosts[nextNode.name]:
+                     minCosts[nextNode.name] = newCost
+                     nextNode.parent = currentNode  
+            exploredWays.append((currentNode,nextNode,newCost))
+            q.lifoEnque(nextNode)
+                  
+   return  minCosts[end.name]
     
                    
             
