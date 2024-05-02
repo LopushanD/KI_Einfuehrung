@@ -64,4 +64,4 @@ for node in romania.nodes:
 
 romania.print()
 
-print(f"The Lowest Cost way from {start} to {end} is: "+str(bfs(romania.nodes[startNodeIndex],romania.nodes[endNodeIndex])))
+print(f"The Lowest Cost way from {start} to {end} is: "+str(prioSearch(romania.nodes[startNodeIndex],romania.nodes[endNodeIndex])))

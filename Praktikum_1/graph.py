@@ -73,7 +73,7 @@ def bfs(start:Node,end:Node) -> int: # type: ignore
    q.fifoEnque(currentNode)
    while(q.fifoNotEmpty()):
       currentNode = q.fifoDeque()
-      print(currentNode.name)
+      #print(currentNode.name)
       current_cost = minCosts[currentNode.name]
       
       for edge in currentNode.edges:
@@ -101,7 +101,7 @@ def dfs(start:Node,end:Node) -> int: # type: ignore
    q.lifoEnque(currentNode)
    while(q.lifoNotEmpty()):
       currentNode = q.lifoDeque()
-      print(currentNode.name)
+      #print(currentNode.name)
       current_cost = minCosts[currentNode.name]
 
       for edge in currentNode.edges:
@@ -115,6 +115,49 @@ def dfs(start:Node,end:Node) -> int: # type: ignore
             exploredWays.append((currentNode,nextNode,newCost))
             q.lifoEnque(nextNode)
                   
+   return  minCosts[end.name]
+
+def prioSearch(start:Node,end:Node):
+   if(start.name == end.name):
+      return start.value
+   # start.explored = True
+   currentNode:Node = start
+   currentNode.parent = currentNode
+   minCosts = {start.name: 0}  # Dictionary to store the minimum costs to each node
+   exploredWays = []
+   q = Queue()
+   #bestWay = [0xffffffff,end]
+   q.fifoEnque(currentNode)
+   while(q.fifoNotEmpty()):
+      currentNode = q.fifoDeque()
+      #print(currentNode.name)
+      nextNodeList:list[tuple] = []
+      newCostList:int = []
+      current_cost = minCosts[currentNode.name]
+      
+      for edge in currentNode.edges:
+         nextNode = edge.end
+         newCost = current_cost + edge.value
+         
+         
+         if(isNotCycle(currentNode,nextNode,newCost,exploredWays)):
+            newCostList.append(newCost)
+            nextNodeList.append((nextNode,newCost))
+            if nextNode.name not in minCosts or newCost < minCosts[nextNode.name]:
+                     minCosts[nextNode.name] = newCost
+                     nextNode.parent = currentNode  
+            exploredWays.append((currentNode,nextNode,newCost))
+            
+      newCostList =sorted(newCostList)
+      #sortedNextNodeList = []
+      
+      for i in newCostList:
+         for n,ii in nextNodeList:
+            if(i == ii):
+               q.fifoEnque(n)
+               
+         #q.fifoEnque(nextNode)
+   printWay(end)
    return  minCosts[end.name]
     
                    

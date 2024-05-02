@@ -55,8 +55,8 @@ class Queue:
 def printWay(node:object)->None:
     nextNode = 0
     print("the way is: ",end='')
-    while node.parent is not None:
-        print(node.name+" -> ",end='')
+    while node.parent!=node:
+        print(node.name+" <- ",end='')
         node = node.parent
     print(node.name)
         
