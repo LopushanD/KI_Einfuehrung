@@ -20,13 +20,14 @@ TO DO
         
         - stepV and stepH may be mixed up in some places, not a problem as long as we create square field
 """
-obstaclesFromTo = [(16*(RECT_WIDTH+MARGIN),0*(RECT_HEIGHT+MARGIN),17*(RECT_WIDTH+MARGIN),9*(RECT_HEIGHT+MARGIN)),(4*(RECT_WIDTH+MARGIN),9*(RECT_HEIGHT+MARGIN),
-                        11*(RECT_WIDTH+MARGIN),10*(RECT_HEIGHT+MARGIN)),(10*(RECT_WIDTH+MARGIN),10*(RECT_HEIGHT+MARGIN),11*(RECT_WIDTH+MARGIN),0*(RECT_HEIGHT+MARGIN))]
+# x begin, y begin, x end, y end ; begin is including, end is excluding
+obstaclesFromTo = [(5,10,11,10),(10,1,11,10),(2,2,4,3),(1,18,11,19)]
         
         
 game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
 
-grid = Grid((480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
-grid.addObstacles(obstaclesFromTo)
+grid = Grid((1,1),(19,19),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+grid.setObstacles(obstaclesFromTo)
 game.addGrid(grid)
+print(grid.grid)
 game.run()
