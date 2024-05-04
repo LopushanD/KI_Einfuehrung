@@ -5,11 +5,11 @@ class Grid:
         self.rectHeight = rectHeight
         self.rectWidth = rectWidth
         
-        self.NODE_UNVISITED=0
-        self.NODE_VISITED=1
-        self.NODE_OBSTACLE=2
-        self.NODE_START=3
-        self.NODE_GOAL=4
+        # self.NODE_UNVISITED=0
+        # self.NODE_VISITED=1
+        # self.NODE_OBSTACLE=2
+        # self.NODE_START=3
+        # self.NODE_GOAL=4
         
         self.COLOR_NODE_VISITED =(0, 0, 255) #blue
         self.COLOR_NODE_GOAL = (0, 255, 0) #green
@@ -35,12 +35,12 @@ class Grid:
     def initGrid(self):
 
         
-        self.grid[self.start[0]][self.start[1]].nodeType = self.NODE_START
+        self.grid[self.start[0]][self.start[1]].nodeType = self.grid[self.start[0]][self.start[1]].NODE_START 
         self.grid[self.start[0]][self.start[1]].posDim1 = self.start[0]
         self.grid[self.start[0]][self.start[1]].posDim2 = self.start[1]
         
         
-        self.grid[self.goal[0]][self.goal[1]].nodeType = self.NODE_GOAL
+        self.grid[self.goal[0]][self.goal[1]].nodeType = self.grid[self.goal[0]][self.goal[1]].NODE_GOAL
         self.grid[self.goal[0]][self.goal[1]].posDim1 = self.goal[0]
         self.grid[self.goal[0]][self.goal[1]].posDim2 = self.goal[1]
         
@@ -96,13 +96,13 @@ class Grid:
             self.grid[sizeX-1][j].addNeighboor(self.grid[sizeX-1][j+1])
             self.grid[sizeX-1][j].addNeighboor(self.grid[sizeX-2][j])
             
-        tmp = [self.grid[0][0],self.grid[0][sizeY-1],self.grid[sizeX-1][0],self.grid[sizeX-1][sizeY-1]]
-        for node in tmp:
-            print(f"node: x: {node.posDim1}, y: {node.posDim2} ; The neighboors are")
+        # tmp = [self.grid[0][0],self.grid[0][sizeY-1],self.grid[sizeX-1][0],self.grid[sizeX-1][sizeY-1]]
+        # for node in tmp:
+        #     print(f"node: x: {node.posDim1}, y: {node.posDim2} ; The neighboors are")
             
-            for neighboor in node.neighboors:
-                print(f"    x: {neighboor.posDim1}, y: {neighboor.posDim2}",end='')
-            print()
+        #     for neighboor in node.neighboors:
+        #         print(f"    x: {neighboor.posDim1}, y: {neighboor.posDim2}",end='')
+        #     print()
             
             
                 
@@ -118,21 +118,24 @@ class Grid:
             xStart,yStart = self.translateCoordinates(obstacle[0],obstacle[3])
             xEnd,yEnd = self.translateCoordinates(obstacle[2],obstacle[1])
             #(obstacle[0]-1,(self.size[1]//(self.rectHeight+self.margin)-obstacle[3]),obstacle[2]-1,(self.size[1]//(self.rectHeight+self.margin))-obstacle[1])
-            print(f" size: {self.size[1]//(self.rectHeight+self.rectWidth)} i: {xStart}->{xEnd} ; j: {yStart} -> {yEnd}")
+            # print(f" size: {self.size[1]//(self.rectHeight+self.rectWidth)} i: {xStart}->{xEnd} ; j: {yStart} -> {yEnd}")
             #(self.grid.size[0]-self.stepV)//self.stepV+1
             for i in range(xStart,xEnd):
                 for j in range(yStart,yEnd):
                     #print(f"i: {i} ; j: {j}")
-                    self.grid[i][j].nodeType = self.NODE_OBSTACLE
+                    self.grid[i][j].nodeType = self.grid[i][j].NODE_OBSTACLE
                     self.grid[i][j].posDim1 = i
                     self.grid[i][j].posDim2 = j
     
     def translateCoordinates(self,x,y):
         return (x-1,self.size[1]//(self.rectHeight+self.margin)-y)
     
-            
+    def markAsBestWay(self,node:Node):
+        while node.parent != node:
+            node.nodeType = node.NODE_BEST_WAY
+      
     
     
-    def setVisited(self,x,y):
-        self.grid[x][y].nodeType = self.NODE_VISITED
+    # def setVisited(self,x,y):
+    #     self.grid[x][y].nodeType =self.grid[x][y].NODE_VISITED
         

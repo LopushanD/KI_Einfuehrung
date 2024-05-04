@@ -21,15 +21,27 @@ TO DO
         
         - stepV and stepH may be mixed up in some places, not a problem as long as we create square field
 """
+
+
 # x begin, y begin, x end, y end ; begin is including, end is excluding
-# obstaclesFromTo = [(5,10,11,10),(10,1,11,10),(2,2,4,3),(1,18,11,19)]
+#obstaclesFromTo = [(5,10,11,10),(10,1,11,10),(2,2,4,3),(1,18,11,19)]
 obstaclesFromTo = []
         
+grid = Grid((1,1),(19,19),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+grid.setObstacles(obstaclesFromTo)
         
 game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
 
-grid = Grid((1,1),(19,19),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
-grid.setObstacles(obstaclesFromTo)
+
 game.addGrid(grid)
+searchAlg = AStar(grid)
+
+searchAlg.start()
+game.start()
+
+searchAlg.join()
+game.join()
+
+
 # print(grid.grid[0][0])
-game.run()
+#grid.markAsBestWay(grid.grid[grid.start[0]][grid.start[1]])
