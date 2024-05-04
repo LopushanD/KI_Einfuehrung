@@ -1,4 +1,4 @@
-from helperClasses import *
+from Field import *
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -15,13 +15,15 @@ MARGIN = 2
 # ---
 """
 TO DO
+        - implement addNeighboors(nodes,their neighboors ) function that calls addNeigboor for each neighboor for each node
         
         - make the field and grid dynamic (so that they work with different values)
         
         - stepV and stepH may be mixed up in some places, not a problem as long as we create square field
 """
 # x begin, y begin, x end, y end ; begin is including, end is excluding
-obstaclesFromTo = [(5,10,11,10),(10,1,11,10),(2,2,4,3),(1,18,11,19)]
+# obstaclesFromTo = [(5,10,11,10),(10,1,11,10),(2,2,4,3),(1,18,11,19)]
+obstaclesFromTo = []
         
         
 game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
@@ -29,5 +31,5 @@ game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
 grid = Grid((1,1),(19,19),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
 grid.setObstacles(obstaclesFromTo)
 game.addGrid(grid)
-print(grid.grid)
+# print(grid.grid[0][0])
 game.run()
