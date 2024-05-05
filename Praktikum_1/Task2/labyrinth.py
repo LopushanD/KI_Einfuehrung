@@ -15,7 +15,7 @@ MARGIN = 2
 # ---
 """
 TO DO
-        - implement addNeighboors(nodes,their neighboors ) function that calls addNeigboor for each neighboor for each node
+        - when you face obstacle and need to make steps that make the way longer, it doesn't happen (like in the situation that is needed for the practical)
         
         - make the field and grid dynamic (so that they work with different values)
         
