@@ -121,7 +121,7 @@ class Grid:
             # print(f" size: {self.size[1]//(self.rectHeight+self.rectWidth)} i: {xStart}->{xEnd} ; j: {yStart} -> {yEnd}")
             #(self.grid.size[0]-self.stepV)//self.stepV+1
             for i in range(xStart,xEnd):
-                for j in range(yStart,yEnd):
+                for j in range(yStart+1,yEnd+1):
                     #print(f"i: {i} ; j: {j}")
                     self.grid[i][j].nodeType = self.grid[i][j].NODE_OBSTACLE
                     self.grid[i][j].posDim1 = i

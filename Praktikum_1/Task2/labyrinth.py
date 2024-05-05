@@ -24,13 +24,14 @@ TO DO
 
 
 # x begin, y begin, x end, y end ; begin is including, end is excluding
-obstaclesFromTo = [(5,10,11,10),(10,0,11,15),(2,2,4,3),(1,18,11,19),(3,15,10,16),(2,3,6,9),(14,17,16,18),(13,3,14,19)]
-# obstaclesFromTo = []
+#obstaclesFromTo = [(5,10,11,10),(10,0,11,15),(2,2,4,3),(1,18,11,19),(3,15,10,16),(2,3,6,9),(14,17,16,18),(13,3,14,19)]
+#obstaclesFromTo = [(5,26,10,27)]
+obstaclesFromTo = [(5,10,11,11),(10,1,11,11),(17,10,18,21)]
         
-grid = Grid((1,1),(19,19),(500,500),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+grid = Grid((1,1),(18,18),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
 grid.setObstacles(obstaclesFromTo)
         
-game = Field((520,520),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
+game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
 
 
 game.addGrid(grid)
