@@ -47,7 +47,7 @@ class Field(threading.Thread):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         self.done = True
-                        self.terminate.set()
+                        # self.terminate.set()
             
             
             self.drawGrid()
@@ -62,6 +62,7 @@ class Field(threading.Thread):
             xPos = (i - self.stepH) // self.stepH
             for j in range(0,self.grid.size[1]-self.stepV,self.stepV):
                 yPos = j// self.stepV
+                #print("Node type {self.grid.grid[xPos][yPos].nodeType} will be painted")
                 if self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_VISITED:
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_VISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_OBSTACLE):
@@ -70,7 +71,7 @@ class Field(threading.Thread):
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_GOAL,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_START):
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
-                elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_BEST_WAY):
+                elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_BEST_WAY):           
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 else:
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))

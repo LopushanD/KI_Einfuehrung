@@ -16,7 +16,7 @@ class Grid:
         self.COLOR_NODE_OBSTACLE = (255,0,0) #red
         self.COLOR_NODE_UNVISITED = (255,255,255) #white
         self.COLOR_NODE_START = (255,255,0)#yellow 
-        self.COLOR_NODE_BEST_WAY = (0,0,0)# black
+        self.COLOR_NODE_BEST_WAY = (0,255,255)# cyan
         self.COLOR_BACKGROUND = (0,0,0)# black
         #padding is equals to size of one rectangle
         self.size = (size[0]-self.rectHeight,size[1]-self.rectWidth)
@@ -131,8 +131,11 @@ class Grid:
         return (x-1,self.size[1]//(self.rectHeight+self.margin)-y)
     
     def markAsBestWay(self,node:Node):
+        nextNode = node
         while node.parent != node:
-            node.nodeType = node.NODE_BEST_WAY
+            nextNode.nodeType = nextNode.NODE_BEST_WAY
+            nextNode = nextNode.parent
+            #print(node.nodeType)
       
     
     
