@@ -35,7 +35,7 @@ class AStar(threading.Thread):
         self.endNode = grid.grid[grid.goal[0]][grid.goal[1]]
         self.q = Queue()
         self.startNode.findTheoreticalDistanceToGoal(self.endNode)
-        self.startNode.parent = self.startNode
+        self.startNode.addParent(self.startNode) 
         self.q.lifoEnque(self.startNode)
         
     def interruptThread(self):
@@ -43,7 +43,7 @@ class AStar(threading.Thread):
         
     def run(self):
         self.search()
-        self.grid.markAsBestWay(self.endNode.parent)
+        self.grid.markAsBestWay(self.endNode)
         self.interruptThread()
         
     def search(self)-> None:
@@ -67,8 +67,8 @@ class AStar(threading.Thread):
                         #self.q.fifoEnque(neighboor)
             nodesToGo = sorted(nodesToGo,key=lambda x: x.valueToGoal ,reverse=True)
             for node in nodesToGo:
-                node.parent = currentNode
-                self.q.lifoEnque(node)
+                node.addParent(currentNode)
+                self.q.fifoEnque(node)
                 
             
             currentNode.setVisited()

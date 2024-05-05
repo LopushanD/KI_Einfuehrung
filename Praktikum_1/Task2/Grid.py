@@ -131,10 +131,17 @@ class Grid:
         return (x-1,self.size[1]//(self.rectHeight+self.margin)-y)
     
     def markAsBestWay(self,node:Node):
-        nextNode = node
-        while node.parent != node:
+        nextNode = node.parents[0] # endNode has only 1 parent
+        parentsToCheck = []
+        while True:
+            if(nextNode == node):
+                break
+            for parent in nextNode.getParents():
+                parentsToCheck.append(parent)
+            bestParent = sorted(parentsToCheck,key=lambda x:x.valueToGoal)[0]
+            parentsToCheck = []
             nextNode.nodeType = nextNode.NODE_BEST_WAY
-            nextNode = nextNode.parent
+            nextNode = bestParent
             #print(node.nodeType)
       
     

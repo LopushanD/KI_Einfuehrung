@@ -12,7 +12,7 @@ class Node:
         self.posDim1 = pos1
         self.posDim2 = pos2
         self.valueToGoal:float = 0xffffffff
-        self.parent = None
+        self.parents = []
         self.nodeType = 0
         self.neighboors = []
         
@@ -44,5 +44,11 @@ class Node:
     
     def getNeighboors(self) -> list[object]: # type: ignore
         return self.neighboors
+    
+    def getParents(self):
+        return self.parents
+    
+    def addParent(self,parent:object):
+        self.parents.append(parent)
     
     
