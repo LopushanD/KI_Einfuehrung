@@ -29,6 +29,10 @@ class Node:
             return False
         return True
     
+    def setNodeType(self,nodeType:int):
+        self.nodeType = nodeType
+        print(self.nodeType)
+    
         
     def findTheoreticalDistanceToGoal(self,goal:object):
         # if(self.isNotObstacle()):

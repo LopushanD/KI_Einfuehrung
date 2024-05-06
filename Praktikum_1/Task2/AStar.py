@@ -6,7 +6,7 @@ class Queue:
         
         self.q = []
     
-    def fifoEnque(self,element:object) -> bool:
+    def enque(self,element:object) -> bool:
         self.q.insert(0,element)
         return True
     
@@ -18,9 +18,6 @@ class Queue:
     def fifoDeque(self) -> object:
         return self.q.pop()
     
-    def lifoEnque(self,element:object) -> bool:
-        self.q.insert(0,element)
-        return True
     
     
     def lifoDeque(self) -> object:
@@ -31,12 +28,12 @@ class AStar(threading.Thread):
         super().__init__()
         self.grid = grid
         self.terminate = threading.Event()
-        self.startNode = grid.grid[grid.start[0]][grid.start[1]]
+        self.startNode:Node = grid.grid[grid.start[0]][grid.start[1]]
         self.endNode = grid.grid[grid.goal[0]][grid.goal[1]]
         self.q = Queue()
         self.startNode.findTheoreticalDistanceToGoal(self.endNode)
-        self.startNode.addParent(self.startNode) 
-        self.q.lifoEnque(self.startNode)
+        self.startNode.addParent(self.startNode)
+        self.q.enque(self.startNode)
         
     def interruptThread(self):
         self.terminate.set()
@@ -44,14 +41,16 @@ class AStar(threading.Thread):
     def run(self):
         self.search()
         self.grid.markAsBestWay(self.endNode)
+        self.startNode.setNodeType(self.startNode.NODE_START)
         self.interruptThread()
         
     def search(self)-> None:
         #priorityVisit ={}
         while self.q.qNotEmpty():
-            time.sleep(0.1)
-            currentNode:Node = self.q.lifoDeque()
-            
+            time.sleep(0.01)
+            currentNode:Node = self.q.fifoDeque()
+            if(not currentNode.isNotVisited()):
+                continue
             if(currentNode == self.endNode):
                 #self.grid.markAsBestWay(self.endNode.parent)
                 break
@@ -65,10 +64,10 @@ class AStar(threading.Thread):
                     nodesToGo.append(neighboor)
                         #neighboor.parent = currentNode
                         #self.q.fifoEnque(neighboor)
-            nodesToGo = sorted(nodesToGo,key=lambda x: x.valueToGoal ,reverse=True)
+            nodesToGo = sorted(nodesToGo,key=lambda x: x.valueToGoal,reverse=True)
             for node in nodesToGo:
                 node.addParent(currentNode)
-                self.q.fifoEnque(node)
+                self.q.enque(node)
                 
             
             currentNode.setVisited()

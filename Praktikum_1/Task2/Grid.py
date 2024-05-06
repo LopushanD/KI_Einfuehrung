@@ -133,8 +133,15 @@ class Grid:
     def markAsBestWay(self,node:Node):
         nextNode = node.parents[0] # endNode has only 1 parent
         parentsToCheck = []
+        #special cases: start == end,step -> end, start->intermediate step -> end
+        if(node.parents[0] == node.parents[0].parents[0]):
+            return
+        elif(node.parents[0].parents[0] == node.parents[0].parents[0].parents[0]):
+            node.parents[0].nodeType = node.NODE_BEST_WAY
+            return
+        
         while True:
-            if(nextNode == node):
+            if(nextNode == nextNode.parents[0]):
                 break
             for parent in nextNode.getParents():
                 parentsToCheck.append(parent)
