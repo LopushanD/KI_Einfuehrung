@@ -1,4 +1,5 @@
 from Node import *
+import time
 class Grid:
     def __init__(self,start:tuple,goal:tuple,size=(500,500),rectWidth=20,rectHeight=20,margin=2):
         self.margin = margin
@@ -132,7 +133,7 @@ class Grid:
     
     def markAsBestWay(self,node:Node):
         nextNode = node.parents[0] # endNode has only 1 parent
-        parentsToCheck = []
+        # parentsToCheck = []
         #special cases: start == end,step -> end, start->intermediate step -> end
         if(node.parents[0] == node.parents[0].parents[0]):
             return
@@ -141,12 +142,16 @@ class Grid:
             return
         
         while True:
+            #print(nextNode.valueToStart)
+            time.sleep(0.1)
             if(nextNode == nextNode.parents[0]):
                 break
-            for parent in nextNode.getParents():
-                parentsToCheck.append(parent)
-            bestParent = sorted(parentsToCheck,key=lambda x:x.valueToGoal)[0]
             parentsToCheck = []
+            for parent in nextNode.getParents():
+                if(parent.nodeType != parent.NODE_BEST_WAY):
+                    parentsToCheck.append(parent)
+            parentsToCheck.sort(key=lambda x:x.valueToStart,reverse=False)
+            bestParent = parentsToCheck[0]
             nextNode.nodeType = nextNode.NODE_BEST_WAY
             nextNode = bestParent
             #print(node.nodeType)
