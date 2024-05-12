@@ -11,8 +11,8 @@ class Node:
         
         self.posDim1 = pos1
         self.posDim2 = pos2
-        self.valueToGoal:float = 0xffffffff
-        self.valueToStart:float =0xffffffff
+        self.cost:float = 0xffffffff
+        self.stepsTaken:int =0
         self.parents = []
         self.nodeType = 0
         self.neighboors = []
@@ -37,11 +37,13 @@ class Node:
         
     def findTheoreticalDistanceToGoal(self,goal:object):
         # if(self.isNotObstacle()):
-        self.valueToGoal = math.sqrt(math.pow(self.posDim1-goal.posDim1,2) + math.pow(self.posDim2 - goal.posDim2,2))
+        return math.sqrt(math.pow(self.posDim1-goal.posDim1,2) + math.pow(self.posDim2 - goal.posDim2,2))
+    def setCost(self,number:float):
+        self.cost = number
         
-    def findTheoreticalDistanceToStart(self,start:object):
+    def getStepsTaken(self):
         # if(self.isNotObstacle()):
-        self.valueToStart = math.sqrt(math.pow(self.posDim1-start.posDim1,2) + math.pow(self.posDim2 - start.posDim2,2))
+        return self.stepsTaken
         # return 0xfffffffe # so that if we add 1 (cost of step), it doesn't flip to 0
         
     # def addNeighboors(self,nodesAndNeighboors:tuple[list[object],list[list[object]]]):

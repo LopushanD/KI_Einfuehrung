@@ -143,14 +143,15 @@ class Grid:
         
         while True:
             #print(nextNode.valueToStart)
-            time.sleep(0.1)
+            time.sleep(0.01)
+            print(nextNode.stepsTaken)
             if(nextNode == nextNode.parents[0]):
                 break
             parentsToCheck = []
             for parent in nextNode.getParents():
                 if(parent.nodeType != parent.NODE_BEST_WAY):
                     parentsToCheck.append(parent)
-            parentsToCheck.sort(key=lambda x:x.valueToStart,reverse=False)
+            parentsToCheck.sort(key=lambda x:x.stepsTaken,reverse=False)
             bestParent = parentsToCheck[0]
             nextNode.nodeType = nextNode.NODE_BEST_WAY
             nextNode = bestParent

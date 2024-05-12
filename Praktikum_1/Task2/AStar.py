@@ -8,7 +8,7 @@ class Queue:
     
     #it's vice versa (worst -> best ). it's to reduce time complexity
     def bestEnque(self,element:object):
-        self.q.append(element)
+        self.q.insert(0,element)
     
     def notBestEnque(self,element:object):
         self.q.insert(-1,element)
@@ -19,7 +19,12 @@ class Queue:
         return False
             
     def bestDeque(self) -> object:
-        return self.q.pop()
+        return self.q.pop(0)
+    
+    def isInQueue(self,element:object) -> bool:
+        if element in self.q:
+            return True
+        return False
     
     
     #better not to use, cause of O(n) time
@@ -33,10 +38,11 @@ class AStar(threading.Thread):
         self.terminate = threading.Event()
         self.startNode:Node = grid.grid[grid.start[0]][grid.start[1]]
         self.endNode = grid.grid[grid.goal[0]][grid.goal[1]]
-        self.q = Queue()
-        self.startNode.findTheoreticalDistanceToGoal(self.endNode)
+        self.open = Queue()
+        #self.closed = Queue()
+        self.startNode.setCost(0)
         self.startNode.addParent(self.startNode)
-        self.q.bestEnque(self.startNode)
+        self.open.bestEnque(self.startNode)
         
     def interruptThread(self):
         self.terminate.set()
@@ -48,59 +54,25 @@ class AStar(threading.Thread):
         self.interruptThread()
         
     def search(self)-> None:
-        #priorityVisit ={}
         
-        while self.q.qNotEmpty():
-            time.sleep(0.02)
-            currentNode:Node = self.q.bestDeque()
-            if(not currentNode.isNotVisited()):
-                continue
+        while self.open.qNotEmpty():
+            time.sleep(0.1)
+            currentNode:Node = self.open.worstDeque()
+            # if(not currentNode.isNotVisited()):
+            #     continue
             if(currentNode == self.endNode):
-                #self.grid.markAsBestWay(self.endNode.parent)
                 break
-            #print(f"x: {currentNode.posDim1}, y: {currentNode.posDim2}")
-            nodesToGo = []
             for neighboor in currentNode.getNeighboors():
                 
-                # if(neighboor.isNotVisited() and neighboor.isNotObstacle()):
-                if(neighboor.isNotObstacle()):
-                    neighboor.findTheoreticalDistanceToGoal(self.endNode)
-                    neighboor.findTheoreticalDistanceToStart(self.startNode)
-                    #if(currentNode.valueToGoal>=neighboor.valueToGoal):
-                    nodesToGo.append(neighboor)
+                if(neighboor.isNotVisited() and neighboor.isNotObstacle()):
+                # if(neighboor.isNotObstacle()):
+                    if(currentNode.cost + 1 +currentNode.findTheoreticalDistanceToGoal(self.endNode) < neighboor.cost + neighboor.findTheoreticalDistanceToGoal(self.endNode)):
+                        neighboor.setCost(currentNode.cost+1+currentNode.findTheoreticalDistanceToGoal(self.endNode))
+                        neighboor.addParent(currentNode)
+                        self.open.bestEnque(neighboor)
+            currentNode.setVisited()                               
                 
-            nodesToGo.sort(key=lambda x: x.valueToGoal,reverse=True)
-                
-            # we make algorithm faster if we sort parts of our main queue, so that best elements are always in the front
-            # 11 is needed so that we don't lose link to our last
-            # if len(self.q.q) > 4:
-            #     nodesToGo.extend(self.q.q[0:3])  # Use extend to add elements from another list
-            #     self.q.q.pop()
-            #     self.q.q.pop()
-            #     self.q.q.pop()
-            #     nodesToGo.sort(key=lambda x: x.valueToGoal,reverse=True)#[0:len(currentNode.getNeighboors())-1]
-            #     #self.q.q.append(nodesToGo.pop())
-            #     #self.q.q.append(nodesToGo.pop())
-            #     #self.q.q.append(nodesToGo.pop())
-            # else:
-            #     nodesToGo.sort(key=lambda x: x.valueToGoal,reverse=True)
-                        
-            #print(f"BEGIN \n ")
-            for node in nodesToGo:
-                #print(node.valueToGoal)
-                node.addParent(currentNode)
-                # if(self.q.qNotEmpty()):
-                #     if(node.valueToGoal < self.q.q[-1].valueToGoal):
-                #         self.q.bestEnque(node)
-                #     else:
-                #         self.q.notBestEnque(node)
-                        
-                # else:
-                #     self.q.bestEnque(node)
-                self.q.bestEnque(node)                
-            #print(f"END \n")
-            
-            currentNode.setVisited()
+            # currentNode.setVisited()
             
                         
                         
