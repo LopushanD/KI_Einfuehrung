@@ -1,25 +1,26 @@
 from Grid import *
 import threading
 import time
+import heapq
 class Queue:
     def __init__(self):
         
         self.q = []
     
     #it's vice versa (worst -> best ). it's to reduce time complexity
-    def bestEnque(self,element:object):
-        self.q.insert(0,element)
+    def enque(self,element:"Node"):
+        heapq.heappush(self.q,(element))
     
-    def notBestEnque(self,element:object):
-        self.q.insert(-1,element)
+    # def notBestEnque(self,element:object):
+    #     self.q.insert(-1,element)
     
     def qNotEmpty(self)-> bool:
         if(len(self.q)>0):
             return True
         return False
             
-    def bestDeque(self) -> object:
-        return self.q.pop(0)
+    def deque(self) -> "Node":
+        return heapq.heappop(self.q)
     
     def isInQueue(self,element:object) -> bool:
         if element in self.q:
@@ -27,9 +28,9 @@ class Queue:
         return False
     
     
-    #better not to use, cause of O(n) time
-    def worstDeque(self) -> object:
-        return self.q.pop(0)
+    # #better not to use, cause of O(n) time
+    # def worstDeque(self) -> object:
+    #     return self.q.pop(0)
     
 class AStar(threading.Thread):
     def __init__(self,grid:Grid):
@@ -42,7 +43,8 @@ class AStar(threading.Thread):
         #self.closed = Queue()
         self.startNode.setCost(0)
         self.startNode.addParent(self.startNode)
-        self.open.bestEnque(self.startNode)
+        self.open.enque(self.startNode)
+        #heapq.heappush(self.open.q,(self.startNode.cost,self.startNode))
         
     def interruptThread(self):
         self.terminate.set()
@@ -56,21 +58,25 @@ class AStar(threading.Thread):
     def search(self)-> None:
         
         while self.open.qNotEmpty():
-            time.sleep(0.1)
-            currentNode:Node = self.open.worstDeque()
-            # if(not currentNode.isNotVisited()):
-            #     continue
-            if(currentNode == self.endNode):
-                break
+            time.sleep(0.02)
+            #currentCost, currentNode = heapq.heappop(self.open.q) # type: ignore
+            currentNode = self.open.deque()
+            if(currentNode.cost >= self.endNode.cost):
+                continue
+            # if(currentNode == self.endNode):
+            #     break
             for neighboor in currentNode.getNeighboors():
                 
                 if(neighboor.isNotVisited() and neighboor.isNotObstacle()):
                 # if(neighboor.isNotObstacle()):
-                    if(currentNode.cost + 1 +currentNode.findTheoreticalDistanceToGoal(self.endNode) < neighboor.cost + neighboor.findTheoreticalDistanceToGoal(self.endNode)):
-                        neighboor.setCost(currentNode.cost+1+currentNode.findTheoreticalDistanceToGoal(self.endNode))
+                    newCost = currentNode.cost+1+currentNode.findTheoreticalDistanceToGoal(self.endNode)
+                    if(newCost < neighboor.cost + neighboor.findTheoreticalDistanceToGoal(self.endNode)):
+                        neighboor.setCost(newCost)
                         neighboor.addParent(currentNode)
-                        self.open.bestEnque(neighboor)
-            currentNode.setVisited()                               
+                        neighboor.setVisited()
+                        # heapq.heappush(self.open.q,(neighboor.cost,neighboor))
+                        self.open.enque(neighboor)
+            # currentNode.setVisited()                               
                 
             # currentNode.setVisited()
             

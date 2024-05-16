@@ -41,6 +41,9 @@ class Node:
     def setCost(self,number:float):
         self.cost = number
         
+    def __lt__(self,other: "Node"): # CHATGPT THIS IS JOB FOR YOU!!!
+        return self.cost < other.cost
+        
     def getStepsTaken(self):
         # if(self.isNotObstacle()):
         return self.stepsTaken
