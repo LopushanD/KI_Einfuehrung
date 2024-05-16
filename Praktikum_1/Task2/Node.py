@@ -11,10 +11,10 @@ class Node:
         
         self.posDim1 = pos1
         self.posDim2 = pos2
+        # basically means cost is infinity
         self.cost:float = 0xffffffff
-        self.stepsTaken:int =0
         self.parents = []
-        self.nodeType = 0
+        self.nodeType = self.NODE_UNVISITED
         self.neighboors = []
         
     def setVisited(self)->None:
@@ -38,20 +38,13 @@ class Node:
     def findTheoreticalDistanceToGoal(self,goal:object):
         # if(self.isNotObstacle()):
         return math.sqrt(math.pow(self.posDim1-goal.posDim1,2) + math.pow(self.posDim2 - goal.posDim2,2))
+    
     def setCost(self,number:float):
         self.cost = number
-        
-    def __lt__(self,other: "Node"): # CHATGPT THIS IS JOB FOR YOU!!!
+    
+    #override of check "lower than" in priority queue, so that it works with Node class
+    def __lt__(self,other: "Node"):
         return self.cost < other.cost
-        
-    def getStepsTaken(self):
-        # if(self.isNotObstacle()):
-        return self.stepsTaken
-        # return 0xfffffffe # so that if we add 1 (cost of step), it doesn't flip to 0
-        
-    # def addNeighboors(self,nodesAndNeighboors:tuple[list[object],list[list[object]]]):
-    #     for node,neighboors in nodesAndNeighboors:
-    #         self.addNeighboor(node)
     
     def addNeighboor(self,node:object):
         self.neighboors.append(node)

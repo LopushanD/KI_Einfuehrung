@@ -2,30 +2,11 @@
 def getNode(name, l):
    return next(( i for i in l if i.name == name), -1)
 
-class Tracker:
-    """Tracks taken path and it's cost"""
-    def __init__(self,startNode:object):
-        self.path:str = startNode.name
-        self.totalCost:int = 0    
-
-    def update(self,nextNode:object,stepCost:int):
-        self.path+=" -> "+nextNode.name
-        self.totalCost+=stepCost
-    def printPath(self):
-        print(self.path)
-        
-    def printCost(self):
-        print(self.totalCost)
-    
-    def printInfo(self):
-        self.printPath()
-        self.printCost()
-        
+     
 class Queue:
     def __init__(self):
         self.fifo = []
         self.lifo = []
-        self.prio = {}
     
     def fifoEnque(self,element:object) -> bool:
         self.fifo.insert(0,element)
@@ -53,7 +34,7 @@ class Queue:
         return self.lifo.pop(0)
 
 def printWay(node:object)->None:
-    nextNode = 0
+    
     print("the way is: ",end='')
     while node.parent!=node:
         print(node.name+" <- ",end='')
@@ -62,12 +43,12 @@ def printWay(node:object)->None:
         
 
 def isNotCycle(parent,child,totalCostChild,exploredWays:list[tuple]) -> bool:
+    # for the way to be a cycle, names of nodes must be on the list and total way cost must be bigger or equal than on the list 
     for way in exploredWays:
         oneCity,otherCity,exploredPairCost = way
-        if( ( (parent.name == oneCity.name and child.name == otherCity.name) or (parent.name == otherCity.name and child.name ==oneCity.name) ) and totalCostChild>=exploredPairCost ):
+        if( ( (parent.name == oneCity.name and child.name == otherCity.name) or (parent.name == otherCity.name and child.name ==oneCity.name) )
+        and totalCostChild>=exploredPairCost ):
             return False
     return True
         
-    # def prioEnque(self,priority:int,element:object) -> bool:
-    #implement when it gets clear what to do with it      
     

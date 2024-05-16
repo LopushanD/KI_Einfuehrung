@@ -2,13 +2,8 @@ import pygame
 from Grid import *
 from AStar import *
 
-
         
-
-
-        
-        
-    
+# field is where our drawing takes place
 class Field(threading.Thread):
     def __init__(self,size:tuple[int,int],verticalStep,horizontalStep,background=(0,0,0),foreground=(255,255,255),fontSize=14):
         super().__init__()
@@ -23,10 +18,6 @@ class Field(threading.Thread):
         
         self.stepV = verticalStep
         self.stepH = horizontalStep
-        
-        
-        
-        #self.gridSize = (self.size[0]-self.stepH,self.size[1]-self.stepV)
         
         self.done = False
         pygame.display.set_caption("My Game")
@@ -47,7 +38,7 @@ class Field(threading.Thread):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         self.done = True
-                        # self.terminate.set()
+                        
             
             
             self.drawGrid()
@@ -56,6 +47,8 @@ class Field(threading.Thread):
 
             self.clock.tick(60)
         pygame.quit()
+        self.terminate.set()
+        
     
     def drawGrid(self):
         for i in range(self.stepH,self.grid.size[0],self.stepH):
@@ -80,7 +73,9 @@ class Field(threading.Thread):
                 
     
     def drawNumbers(self):
+        #counter is a number drawn
         counter = (self.grid.size[0]-self.stepV)//self.stepV+1
+        #needed for proper spacing
         coordinatesV = (((self.stepH)//4,(self.stepH)//2),self.stepV//4)
         #draw vertical lines
         for i in range(0,self.grid.size[1]-self.stepV,self.stepV):

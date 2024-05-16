@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from utils import *
+import heapq
 
 
 class Node:
@@ -8,17 +9,7 @@ class Node:
        self.parent = None # Parent Node
        self.name = name #name of our node
        self.edges = [] # options where to go : (ourNode,otherNode,cost)
-       self.value = 0 # cost of the path
-       
-   def printNode(self):
-      print("name, value, parent")
-      print(self.name,end=' ')
-      print(self.value,end=' ')
-      print(self.parent)
-      print("edges, costs")
-      for edge in self.edges:
-         edge.printEdge()
-      
+           
     
 
 class Edge:
@@ -63,14 +54,15 @@ class Graph:
 def bfs(start:Node,end:Node) -> int: # type: ignore 
    if(start.name == end.name):
       return start.value
-   # start.explored = True
+   
+   #initialization
    currentNode:Node = start
    currentNode.parent = currentNode
    minCosts = {start.name: 0}  # Dictionary to store the minimum costs to each node
    exploredWays = []
    q = Queue()
-   #bestWay = [0xffffffff,end]
    q.fifoEnque(currentNode)
+   
    while(q.fifoNotEmpty()):
       currentNode = q.fifoDeque()
       #print(currentNode.name)
@@ -79,11 +71,14 @@ def bfs(start:Node,end:Node) -> int: # type: ignore
       for edge in currentNode.edges:
          nextNode = edge.end
          newCost = current_cost + edge.value
+         # expand all neighboors if they don't lead to cycle
          if(isNotCycle(currentNode,nextNode,newCost,exploredWays)):
             
+            # Add or update path cost to the node
             if nextNode.name not in minCosts or newCost < minCosts[nextNode.name]:
                      minCosts[nextNode.name] = newCost
-                     nextNode.parent = currentNode  
+                     nextNode.parent = currentNode 
+            #mark way between nodes as explored 
             exploredWays.append((currentNode,nextNode,newCost))
             q.fifoEnque(nextNode)
       
@@ -97,8 +92,10 @@ def dfs(start:Node,end:Node) -> int: # type: ignore
    currentNode.parent = currentNode
    minCosts = {start.name: 0}  # Dictionary to store the minimum costs to each node
    exploredWays = []
+   
    q = Queue()
    q.lifoEnque(currentNode)
+   
    while(q.lifoNotEmpty()):
       currentNode = q.lifoDeque()
       #print(currentNode.name)
@@ -107,11 +104,14 @@ def dfs(start:Node,end:Node) -> int: # type: ignore
       for edge in currentNode.edges:
          nextNode = edge.end
          newCost = current_cost + edge.value
+         # expand all neighboors if they don't lead to cycle
          if(isNotCycle(currentNode,nextNode,newCost,exploredWays)):
             
+            # Add or update path cost to the node
             if nextNode.name not in minCosts or newCost < minCosts[nextNode.name]:
                      minCosts[nextNode.name] = newCost
-                     nextNode.parent = currentNode  
+                     nextNode.parent = currentNode
+            #mark way between nodes as explored 
             exploredWays.append((currentNode,nextNode,newCost))
             q.lifoEnque(nextNode)
                   
@@ -120,44 +120,53 @@ def dfs(start:Node,end:Node) -> int: # type: ignore
 def prioSearch(start:Node,end:Node):
    if(start.name == end.name):
       return start.value
-   # start.explored = True
+   
    currentNode:Node = start
    currentNode.parent = currentNode
    minCosts = {start.name: 0}  # Dictionary to store the minimum costs to each node
    exploredWays = []
    q = Queue()
-   #bestWay = [0xffffffff,end]
    q.fifoEnque(currentNode)
+   
    while(q.fifoNotEmpty()):
       currentNode = q.fifoDeque()
-      #print(currentNode.name)
+
       nextNodeList:list[tuple] = []
       newCostList:int = []
-      current_cost = minCosts[currentNode.name]
+      currentCost = minCosts[currentNode.name]
       
       for edge in currentNode.edges:
          nextNode = edge.end
-         newCost = current_cost + edge.value
+         newCost = currentCost + edge.value
          
-         
+         # expand all neighboors if they don't lead to cycle
          if(isNotCycle(currentNode,nextNode,newCost,exploredWays)):
             newCostList.append(newCost)
             nextNodeList.append((nextNode,newCost))
+            
+            # Add or update path cost to the node
             if nextNode.name not in minCosts or newCost < minCosts[nextNode.name]:
                      minCosts[nextNode.name] = newCost
                      nextNode.parent = currentNode  
             exploredWays.append((currentNode,nextNode,newCost))
-            
+      # 
       newCostList =sorted(newCostList)
       #sortedNextNodeList = []
       
+      # imitate priority queue by inserting lowest cost node into regular queue first
+      # like thirdLowest -> secondLowest -> lowest
       for i in newCostList:
+         # n - node, ii- cost
          for n,ii in nextNodeList:
+            #needed because newCostList is sorted, but nextNodeList is in chaotic order.
             if(i == ii):
                q.fifoEnque(n)
+               break
+               
+
+               
                
          #q.fifoEnque(nextNode)
-   printWay(end)
    return  minCosts[end.name]
     
                    

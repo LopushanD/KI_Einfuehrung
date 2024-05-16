@@ -1,10 +1,5 @@
 from Field import *
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
 
 RECT_WIDTH = 20
 RECT_HEIGHT = 20
@@ -52,21 +47,17 @@ obstaclesFromTo = [(5,10,11,11),(10,1,11,11),(17,10,18,21)]
 # game = Field((500*2,500*2),(RECT_HEIGHT+MARGIN)//5,(RECT_WIDTH+MARGIN)//5)
         
 
-grid = Grid((1,1),(18,18),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+grid = Grid((1,1),(20,20),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
 grid.setObstacles(obstaclesFromTo)
 game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
 
 
 game.addGrid(grid)
 searchAlg = AStar(grid)
-#game.run()
-# searchAlg.search()
-searchAlg.start()
+
 game.start()
+searchAlg.start()
 
-#searchAlg.join()
-#game.join()
+searchAlg.join()
+game.join() 
 
-
-# print(grid.grid[0][0])
-#grid.markAsBestWay(grid.grid[grid.start[0]][grid.start[1]])
