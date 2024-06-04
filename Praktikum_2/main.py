@@ -1,4 +1,4 @@
-from algorithm import *
+from GeneticAlgorithm import *
 import seaborn
 import pandas
 import matplotlib.pyplot as plt
@@ -15,7 +15,7 @@ for i in range(8):
         queens[i]+= str(random.randint(1,8))
 
 
-alg = Algorithm(queens2,iterationsNumber=100)
+alg = GeneticAlgorithm(queens2,iterationsNumber=100)
 
 # board = Board()
 # board.updateBoard(queens[0])
@@ -26,5 +26,7 @@ data= alg.geneticAlgorithm()
 frame = pandas.Series(data)
 seaborn.scatterplot(data=frame)
 plt.show()
+
+
 
 # print(random.random())

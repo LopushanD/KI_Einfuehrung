@@ -1,22 +1,18 @@
 from board import *
 import random
 import math
-class Algorithm():
-    def __init__(self,population:list[str],isModelGenetic:bool=True,iterationsNumber:int=100):
+class GeneticAlgorithm():
+    def __init__(self,population:list[str],iterationsNumber:int=100):
         self.listQueensScores:list[list[str,int]] = self.initQueensScores(population)
         self.iterationsNumber = iterationsNumber
-        self.isModelGenetic = isModelGenetic
         
         
         
     def start(self):
-        if(self.isModelGenetic):
             self.geneticAlgorithm()
-        else:
-            self.backtrackingAlgorithm()
             
     
-    #not tested  
+    # Done 
     def geneticAlgorithm(self) -> list:
         """looks for best positioning of queens on chessboard
 
@@ -66,11 +62,7 @@ class Algorithm():
             self.listQueensScores = newPopulation
             iterationCounter+=1
         return dataToVisualize
-            
-    #not tested   
-    def backtrackingAlgorithm(self):
-        pass   
-     
+
     # Done  
     def checkAttacks(self,queens:str)->int:
         """Checks who attacks who
