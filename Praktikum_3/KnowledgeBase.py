@@ -13,12 +13,13 @@ WEST =3
 class KnowledgeBase():
     def __init__(self):
         self.kb = ["-P00","-G00"]
+        self.reward = 0
         self.playerDirection = None
         self.hasArrow = True
         self.wumpusDead = False
         self.hasGold = False
     
-    def tell(self,newKnowledge:dict,timestamp:int):
+    def tell(self,newKnowledge:dict,reward:float,timestamp:int):
         self.playerDirection = newKnowledge["direction"].value
         # self.hasArrow = newKnowledge["arrow"]
         # self.hasGold = newKnowledge["gold"]
@@ -51,10 +52,16 @@ class KnowledgeBase():
         derivedKnowledge.append(gold)
         
         self.kb.extend(derivedKnowledge)
+        self.kb=list(set(self.kb)) # needed to delete duplicates
+        self.resolve()
+        self.kb=list(set(self.kb)) # needed to delete duplicates
+        
+        if(not reward == -1000):
+            self.kb.extend([f"-P{str(x)+str(y)}",f"-W{str(x)+str(y)}"])
         
     def derive(self,xPos:int,Ypos:int,newKnowledge:list[str])->list:
         result:list[str] = []
-        print(newKnowledge)
+        # print(newKnowledge)
         for e in newKnowledge:
             tmp:list =[]
             # prefix=""
@@ -64,6 +71,8 @@ class KnowledgeBase():
                 # prefix='-'
                 # e = e.removeprefix('-')
             #positions of possible pit/wumpus(x,y)
+
+                
             if(xPos == 0):
                 if(Ypos == 0):
                     if(e[0] =='-'):
@@ -77,10 +86,10 @@ class KnowledgeBase():
                         tmp.extend([f"{e}02 v {e}13"])
                 else:
                     if(e[0] == '-'):
-                        tmp.extend([f"{e}0{str(Ypos+1)}0",f"{e}0{str(Ypos-1)}",f"{e}{str(xPos+1)}{str(Ypos)}"])
+                        tmp.extend([f"{e}0{str(Ypos+1)}",f"{e}0{str(Ypos-1)}",f"{e}{str(xPos+1)}{str(Ypos)}"])
                         
                     else:
-                        tmp.extend([f"{e}0{str(Ypos+1)}0 v {e}{str(xPos+1)}{str(Ypos)} v {e}0{str(Ypos-1)}"])
+                        tmp.extend([f"{e}0{str(Ypos+1)} v {e}{str(xPos+1)}{str(Ypos)} v {e}0{str(Ypos-1)}"])
             elif(xPos == 3):
                 if(Ypos == 0):
                     if(e[0] == '-'):
@@ -128,9 +137,31 @@ class KnowledgeBase():
             result[i] = result[i].replace('S','W')
             result[i] = result[i].replace('B','P')
             
-        print(f"result --> {result}")
+        # print(f"result --> {result}")
             
         return result
+    
+    def resolve(self) -> None:
+        assumptionList:list[str] =[] # list with assumptions like 'W20 v W31 v W22 v W11'
+        factList = [] # list with facts like '-W12', '-W11, W10'
+        for e in self.kb:
+            if(' v 'in e): # check wheter assumption or fact
+                assumptionList.extend(e.split(' v ')) # assumption 'W20 v W31 v W22 v W11' splitted into W20, W31, W22, W11
+                self.kb.remove(e) # remove from knowledge base to return it later after resolving the assumption
+            else:
+                factList.append(e) 
+        assumptionList = list(set(assumptionList)) # remove duplicates
+        print(f"Fact list {factList}")
+        print(f"Assumption list {assumptionList}")
+
+        for e_splitted in assumptionList: 
+            print(f"Current Element of assumption{e_splitted}")
+            for fact in factList: # find facts that have to do with the assumption element
+                if("-"+e_splitted == fact): # check if there are facts that contradict assumption element
+                    # print(self.kb)
+                    assumptionList.remove(e_splitted) # remove part of the assumption
+        print(f"Assumption that remains{assumptionList}")
+        self.kb.append(" v ".join(assumptionList)) # return assumption that was completely or partially resolved
         
     def ask(self,timestamp:int)-> int:
         pass
