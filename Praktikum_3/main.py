@@ -19,11 +19,22 @@ print(f"Knowledge base after step {kb.kb}")
 #     obs,reward,isTerminated,addInfo = wumpus_env.step(kb.ask(timeStamp))
 #     wumpus_env.render()
 while True:
-    action = int(input("What to do? WALK  0 TURNLEFT  1 TURNRIGHT  2 GRAB  3 SHOOT  4 CLIMB  5\n"))
-    timeStamp+=1
-    obs,reward,isTerminated,addInfo = wumpus_env.step(action)
+    query = []
+    try:
+        action = int(input("What to do? WALK  0 TURNLEFT  1 TURNRIGHT  2 GRAB  3 SHOOT  4 CLIMB  5\n"))
+    except :
+        continue
+    if(action == 99):
+        query.append(input("Input your query\n"))
+    elif(action >=0 and action <=5):
+        obs,reward,isTerminated,addInfo = wumpus_env.step(action)
+    else:
+        continue
     wumpus_env.render()
-    kb.tell(obs,reward,timeStamp)
+    kb.tell(obs,reward)
+    isEntailed = kb.askNew(query=query)
+    if(action == 99):
+        print(isEntailed)
     print(f"Knowledge base after step {kb.kb}")
     # print(f"reward: {reward}")
     

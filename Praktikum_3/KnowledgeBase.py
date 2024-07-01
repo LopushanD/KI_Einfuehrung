@@ -50,17 +50,17 @@ class KnowledgeBase():
         
         gold = result[2]+str(x)+str(y)
         #makes logical resolution (what implies what)
-        derivedKnowledge = self.derive(x,y,result[0:2])
-        derivedKnowledge.append(gold)
         
         # checks if our current tile is safe and adds this info to the knowledge base
         if(not reward == -1000):
             self.kb.extend([f"-P{str(x)+str(y)}",f"-W{str(x)+str(y)}"])
         
+        derivedKnowledge = self.derive(x,y,result[0:2])
+        derivedKnowledge.append(gold)
         self.kb.extend(derivedKnowledge)
-        self.kb=list(set(self.kb)) # needed to delete duplicates
-        self.resolve()
-        self.kb=list(set(self.kb)) # needed to delete duplicates
+        # self.kb=list(set(self.kb)) # needed to delete duplicates
+        # self.resolve()
+        # self.kb=list(set(self.kb)) # needed to delete duplicates
         
         
     def derive(self,xPos:int,Ypos:int,newKnowledge:list[str])->list:
@@ -135,27 +135,83 @@ class KnowledgeBase():
             result[i] = result[i].replace('S','W')
             result[i] = result[i].replace('B','P')
             
-        #if we already have facts about added assumption
+        # if we already have facts about added assumption
         # before = []
         # before.extend(result)
-        # for e in result:
+        # for e in self.kb:
         #     if(" v " not in e):
         #         ###print(f"e -->{e}")
-        #         for e2 in result:
-        #             if(" v " in e2):
-        #                 # ##print(f"e2 -->{e2}")
-        #                 if(e in e2):
-        #                     result.remove(e2)
+                
+        #         for i in range(len(result)):
+        #             tmp:list[str] = result[i].split(" v ")
+        #             for e2 in result[i].split(" v "):
+        #                     if("-"+e == e2):
+        #                         tmp.remove(e2)
+        #             if(len(tmp)>0):
+        #                 result[i] = ' v '.join(tmp)
+        # print(result)
         # after = []
         # after.extend(result)
         # if(len(before) > len(after)):
         #     print(f"IN DERIVE() THE FOR LOOP HAS DONE SOMETHING\n{before}\n{after}")                
-        # #print(f"result --> {result}")
+        #print(f"result --> {result}")
             
         return result
     
-    # has same function as ask method (forward chaining)
-    def resolve(self) -> None:
+    def askNew(self, query:list[str]=[]) -> bool:
+        assumptionList = query
+        factList = [] # list with facts like '-W12', '-W11, W10'
+        if(len(query)==0):#automatic query for agent's assumptions   
+            for e in self.kb[:]:
+                if(' v 'in e): # check wheter assumption or fact
+                    assumptionList.extend(e.split(' v ')) # assumption 'W20 v W31 v W22 v W11' splitted into W20, W31, W22, W11
+                    self.kb.remove(e) # remove from knowledge base to return it later after resolving the assumption
+                else:
+                    factList.append(e) 
+        else: # manual query by user
+            
+            for e in self.kb[:]:
+                if(not ' v 'in e): # check wheter assumption or fact
+                    factList.append(e) 
+        assumptionList = list(set(assumptionList)) # remove duplicates
+        tmp = []
+        tmp.extend(assumptionList)
+        for e_splitted in tmp: 
+            # print(f"Current Element of assumption {e_splitted}")
+            for fact in factList: # find facts that have to do with the assumption element
+                if("-"+e_splitted == fact): # check if there are facts that contradict assumption element
+                    # print(self.kb)
+                    try:
+                        assumptionList.remove(e_splitted) # remove part of the assumption
+                    finally:
+                        continue
+        #print(f"Assumption that remains{assumptionList}")
+        
+        if(len(assumptionList)>0):
+            wumpusAssumptionList = []
+            pitAssumptionList = []
+            for assumption in assumptionList:
+                if(assumption[0] == "W"):
+                    wumpusAssumptionList.append(assumption)
+                else:
+                    pitAssumptionList.append(assumption)
+            
+            if(len(wumpusAssumptionList)>0):
+                tmp = " v ".join(wumpusAssumptionList)
+                if(not self.wumpusFound):
+                    if(" v "not in tmp):
+                        self.wumpusFound = True
+                    self.kb.append(tmp) # add assumption that was completely or partially resolved
+            if(len(pitAssumptionList)>0):
+                self.kb.append(" v ".join(pitAssumptionList)) # add assumption that was completely or partially resolved
+            self.kb=list(set(self.kb)) # needed to delete duplicates
+            
+            return True
+        self.kb=list(set(self.kb)) # needed to delete duplicates
+        return False
+    
+    # has same function as ask method (but suits task description better)
+    def askOld(self) -> None:
         assumptionList:list[str] =[] # list with assumptions like 'W20 v W31 v W22 v W11'
         factList = [] # list with facts like '-W12', '-W11, W10'
         
