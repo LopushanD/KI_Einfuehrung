@@ -58,9 +58,7 @@ class KnowledgeBase():
         derivedKnowledge = self.derive(x,y,result[0:2])
         derivedKnowledge.append(gold)
         self.kb.extend(derivedKnowledge)
-        # self.kb=list(set(self.kb)) # needed to delete duplicates
-        # self.resolve()
-        # self.kb=list(set(self.kb)) # needed to delete duplicates
+        
         
         
     def derive(self,xPos:int,Ypos:int,newKnowledge:list[str])->list:
@@ -135,27 +133,6 @@ class KnowledgeBase():
             result[i] = result[i].replace('S','W')
             result[i] = result[i].replace('B','P')
             
-        # if we already have facts about added assumption
-        # before = []
-        # before.extend(result)
-        # for e in self.kb:
-        #     if(" v " not in e):
-        #         ###print(f"e -->{e}")
-                
-        #         for i in range(len(result)):
-        #             tmp:list[str] = result[i].split(" v ")
-        #             for e2 in result[i].split(" v "):
-        #                     if("-"+e == e2):
-        #                         tmp.remove(e2)
-        #             if(len(tmp)>0):
-        #                 result[i] = ' v '.join(tmp)
-        # print(result)
-        # after = []
-        # after.extend(result)
-        # if(len(before) > len(after)):
-        #     print(f"IN DERIVE() THE FOR LOOP HAS DONE SOMETHING\n{before}\n{after}")                
-        #print(f"result --> {result}")
-            
         return result
     
     def askNew(self, query:list[str]=[]) -> bool:
@@ -210,52 +187,15 @@ class KnowledgeBase():
         self.kb=list(set(self.kb)) # needed to delete duplicates
         return False
     
-    # has same function as ask method (but suits task description better)
-    def askOld(self) -> None:
-        assumptionList:list[str] =[] # list with assumptions like 'W20 v W31 v W22 v W11'
-        factList = [] # list with facts like '-W12', '-W11, W10'
-        
-        for e in self.kb[:]:
-            if(' v 'in e): # check wheter assumption or fact
-                assumptionList.extend(e.split(' v ')) # assumption 'W20 v W31 v W22 v W11' splitted into W20, W31, W22, W11
-                self.kb.remove(e) # remove from knowledge base to return it later after resolving the assumption
-            else:
-                factList.append(e) 
-        assumptionList = list(set(assumptionList)) # remove duplicates
-        #print(f"Fact list {factList}")
-        #print(f"Assumption list {assumptionList}")
-
-        for e_splitted in assumptionList: 
-            # print(f"Current Element of assumption {e_splitted}")
-            for fact in factList: # find facts that have to do with the assumption element
-                if("-"+e_splitted == fact): # check if there are facts that contradict assumption element
-                    # print(self.kb)
-                    assumptionList.remove(e_splitted) # remove part of the assumption
-        #print(f"Assumption that remains{assumptionList}")
-        
-        if(len(assumptionList)>0):
-            wumpusAssumptionList = []
-            pitAssumptionList = []
-            for assumption in assumptionList:
-                if(assumption[0] == "W"):
-                    wumpusAssumptionList.append(assumption)
-                else:
-                    pitAssumptionList.append(assumption)
-            if(len(wumpusAssumptionList)>0):
-                tmp = " v ".join(wumpusAssumptionList)
-                if(not self.wumpusFound):
-                    if(" v "not in tmp):
-                        self.wumpusFound = True
-                    self.kb.append(tmp) # add assumption that was completely or partially resolved
-            if(len(pitAssumptionList)>0):
-                self.kb.append(" v ".join(pitAssumptionList)) # add assumption that was completely or partially resolved
-                
-        
-    # def ask(self,query:str,timestamp:int=0)-> bool:
-    #     pass
     
-    # def turn(self,side:str)->None:
-    #     if(side=='R'):
-    #         self.playerDirection = (self.playerDirection+1)%4
-    #     elif(side=='L'):
-    #         self.playerDirection = (self.playerDirection-1)%4
+    def toHorn(clause:str)-> list[str]:
+        clausePartitionedList = clause.split(" V ")
+        resultList = []
+        for i in range(0,len(clausePartitionedList)):
+            tmp= clausePartitionedList[i]
+            for j in range(0,len(clausePartitionedList)):
+                if(i==j):
+                    continue
+                tmp = tmp+' /\\ '+'-'+clausePartitionedList[j]
+            resultList.append(tmp)
+        return resultList
