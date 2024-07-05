@@ -14,7 +14,7 @@ class Perceptron:
             
             
     def sigmoid(self,x):
-        result = 1 / (1+pow(1/math.e,x))
+        result = 1 / (1+np.exp(-x))
         # print(f"AFTER CONVERTION {result}")
         return result
     
