@@ -47,9 +47,9 @@ obstaclesFromTo = [(5,10,11,11),(10,1,11,11),(17,10,18,21)]
 # game = Field((500*2,500*2),(RECT_HEIGHT+MARGIN)//5,(RECT_WIDTH+MARGIN)//5)
         
 
-grid = Grid((1,1),(20,20),(480,480),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+grid = Grid((1,1),(20,20),(1000,1000),RECT_WIDTH,RECT_HEIGHT,MARGIN)
 grid.setObstacles(obstaclesFromTo)
-game = Field((500,500),RECT_HEIGHT+MARGIN,RECT_WIDTH+MARGIN)
+game = Field((1000,1000))
 
 
 game.addGrid(grid)

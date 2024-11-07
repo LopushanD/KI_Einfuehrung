@@ -5,19 +5,20 @@ from AStar import *
         
 # field is where our drawing takes place
 class Field(threading.Thread):
-    def __init__(self,size:tuple[int,int],verticalStep,horizontalStep,background=(0,0,0),foreground=(255,255,255),fontSize=14):
+    def __init__(self,size:tuple[int,int],background=(0,0,0),foreground=(255,255,255)):
         super().__init__()
         self.terminate = threading.Event()
         pygame.init()
         self.size = size
         self.screen = pygame.display.set_mode(size)
-        self.fontSize = fontSize
-        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize) # text font
         self.background = background
         self.foreground = foreground
         
-        self.stepV = verticalStep
-        self.stepH = horizontalStep
+        self.stepV = None
+        self.stepH = None
+
+        self.fontSize = None
+        self.font = None # text font
         
         self.done = False
         pygame.display.set_caption("My Game")
@@ -27,6 +28,8 @@ class Field(threading.Thread):
         self.grid = grid
         self.stepV = self.grid.rectHeight+self.grid.margin
         self.stepH = self.grid.rectWidth+self.grid.margin
+        self.fontSize = round(self.grid.rectWidth*1)
+        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
     
     def run(self):
         self.begin()
@@ -51,7 +54,8 @@ class Field(threading.Thread):
         
     
     def drawGrid(self):
-        for i in range(self.stepH,self.grid.size[0],self.stepH):
+        #we begin not from 0, but from 1.5 Cube width, because we need space for vertical numbers(row numbers). 0.5 Cube width is padding between number and cubes
+        for i in range(round(self.stepH*1.5),self.grid.size[0],self.stepH):
             xPos = (i - self.stepH) // self.stepH
             for j in range(0,self.grid.size[1]-self.stepV,self.stepV):
                 yPos = j// self.stepV
@@ -73,29 +77,37 @@ class Field(threading.Thread):
                 
     
     def drawNumbers(self):
-        #counter is a number drawn
+        #counter is a number drawn. For vertical numbers it goes from maximum to zero, for horizontal from zero to maximum
         counter = (self.grid.size[0]-self.stepV)//self.stepV+1
-        #needed for proper spacing
-        coordinatesV = (((self.stepH)//4,(self.stepH)//2),self.stepV//4)
+        
+        verticalOffsetFromCubeLeftBottom = self.fontSize//2
+        maxRowNumber = counter
+        while(maxRowNumber//10 >0):
+            self.fontSize = round(self.fontSize*0.75)
+            verticalOffsetFromCubeLeftBottom = self.fontSize//2
+            maxRowNumber = maxRowNumber//10
+        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        
         #draw vertical lines
         for i in range(0,self.grid.size[1]-self.stepV,self.stepV):
             textV = self.font.render(str(counter), True, self.foreground,self.background)
-            if(counter>9):
-                self.screen.blit(textV,(coordinatesV[0][0],i+coordinatesV[1]))
-            else:
-                self.screen.blit(textV,(coordinatesV[0][1],i+coordinatesV[1]))
+            
+            self.screen.blit(textV,((self.stepH)//2,i+verticalOffsetFromCubeLeftBottom))
             counter-=1
         counter=1
-        coordinateH =(self.grid.rectWidth//self.fontSize*3,self.grid.rectWidth//self.fontSize)
-        #draw horizontal lines
-        for i in range(self.stepH,self.grid.size[1],self.stepH):
-                
-            textH = self.font.render(str(counter), True,self.foreground, self.background)
-            # make steps between numbers look more equal
-            if(i>10):
-                # self.screen.blit(textH,(i+self.grid.rectWidth//8,self.gridSize[1]-RECT_WIDTH))
-                self.screen.blit(textH,(i+coordinateH[0],self.grid.size[1]-self.grid.rectHeight//2))
-            else:
-                self.screen.blit(textH,(i+coordinateH[1],self.grid.size[1]-self.grid.rectHeight//2))
+        
+        #setup correct font size for horizontal numbers, so that everything fits
+        horizontalOffsetFromCubeLeftBottom = self.fontSize//2
+        maxColumnNumber = (self.grid.size[1]-self.stepH)//self.stepH+1
+        while(maxColumnNumber//10 >0):
+            self.fontSize = round(self.fontSize*0.75)
+            horizontalOffsetFromCubeLeftBottom = self.fontSize//2
+            maxColumnNumber = maxColumnNumber//10
+        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        
+        # draw horizontal numbers
+        for i in range(round(self.stepH*1.5),self.grid.size[1],self.stepH):
+            textH = self.font.render(str(counter), True,self.foreground, self.background)                        
+            self.screen.blit(textH,(i+horizontalOffsetFromCubeLeftBottom,self.grid.size[1]-self.grid.rectHeight//2))
             counter+=1
 
