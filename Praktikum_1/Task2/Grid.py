@@ -105,6 +105,10 @@ class Grid:
                     self.grid[i][j].posDim1 = i
                     self.grid[i][j].posDim2 = j
                     
+    def clearObstacles(self,obstacles:list[tuple]):
+        """TO BE IMPLEMENTED !!!"""
+        pass
+                    
     def translateCoordinates(self,x,y):
         """ translates coordinates from from user's point of view (0,0 is bottom left) to PyGame's point of view (0,0 is top left)
         coordinate entity is 1 tile, not 1 pixel. For example if tile is 10x10 pixels, then coordinate(3,3) is at (30,30) pixels   

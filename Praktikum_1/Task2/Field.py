@@ -49,8 +49,8 @@ class Field(threading.Thread):
             pygame.display.flip()
 
             self.clock.tick(60)
-        pygame.quit()
         self.terminate.set()
+        pygame.quit()
         
     
     def drawGrid(self):
