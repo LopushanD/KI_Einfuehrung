@@ -105,6 +105,6 @@ class Field():
         # draw horizontal numbers
         for i in range(round(self.stepH*1.5),self.grid.size[1],self.stepH):
             textH = self.font.render(str(counter), True,self.foreground, self.background)                        
-            self.screen.blit(textH,(i+horizontalOffsetFromCubeLeftBottom,self.grid.size[1]-self.grid.rectHeight//2))
+            self.screen.blit(textH,(i+horizontalOffsetFromCubeLeftBottom,self.grid.size[1]+self.grid.rectHeight//2))
             counter+=1
 

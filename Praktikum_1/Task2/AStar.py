@@ -53,7 +53,7 @@ class AStar(threading.Thread):
         
         while self.open.qNotEmpty():
             #just for visualization purposes
-            time.sleep(0.02)
+            time.sleep(0.01)
 
             currentNode = self.open.deque()
             #don't need to check ways that are obviously worse
