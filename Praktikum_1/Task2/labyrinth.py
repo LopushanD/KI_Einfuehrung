@@ -11,8 +11,7 @@ MARGIN = 2
 """
 TO DO
         - Implement contorller class that manages all other classes and starts the program
-
-        - Now the window freezes when algorithm begins to work. It has to do with threads
+                *also must kill algorithm thread when drawing thread is terminated
         
         - create dialogs so that uses can choose size of grid, speed of animation, draw obstacles.
                 * first make it terminal based
@@ -54,17 +53,17 @@ obstaclesFromTo = [(5,10,11,11),(10,1,11,11),(17,10,18,21)]
 # game = Field((500*2,500*2),(RECT_HEIGHT+MARGIN)//5,(RECT_WIDTH+MARGIN)//5)
         
 
-grid = Grid((1,1),(10,10),(400,400),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+grid = Grid((3,3),(20,20),(800,800),RECT_WIDTH,RECT_HEIGHT,MARGIN)
 grid.setObstacles(obstaclesFromTo)
-game = Field((600,1000))
+game = Field((1000,1000))
 
 
 game.addGrid(grid)
 searchAlg = AStar(grid)
 
-game.start()
 searchAlg.start()
+game.begin()
 
 searchAlg.join()
-game.join() 
+# game.join() 
 

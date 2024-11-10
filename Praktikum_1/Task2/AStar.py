@@ -44,8 +44,9 @@ class AStar(threading.Thread):
         
     def run(self):
         self.search()
+        # self.startNode.setNodeType(self.startNode.NODE_START)
         self.grid.markAsBestWay(self.endNode)
-        self.startNode.setNodeType(self.startNode.NODE_START)
+        # self.startNode.setNodeType(self.startNode.NODE_START)
         self.interruptThread()
         
     def search(self)-> None:

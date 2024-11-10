@@ -32,7 +32,7 @@ class Node:
     
     def setNodeType(self,nodeType:int):
         self.nodeType = nodeType
-        print(self.nodeType)
+        # print(self.nodeType)
     
         
     def findTheoreticalDistanceToGoal(self,goal:object):

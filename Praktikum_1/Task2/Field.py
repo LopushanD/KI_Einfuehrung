@@ -4,10 +4,10 @@ from AStar import *
 
         
 # field is where our drawing takes place
-class Field(threading.Thread):
+class Field():
     def __init__(self,size:tuple[int,int],background=(0,0,0),foreground=(255,255,255)):
-        super().__init__()
-        self.terminate = threading.Event()
+        # super().__init__()
+        # self.terminate = threading.Event()
         pygame.init()
         self.size = size
         self.screen = pygame.display.set_mode(size)
@@ -31,8 +31,8 @@ class Field(threading.Thread):
         self.fontSize = round(self.grid.rectWidth*1)
         self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
     
-    def run(self):
-        self.begin()
+    # def run(self):
+    #     self.begin()
     
     def begin(self):
         self.screen.fill(self.background)
@@ -41,15 +41,12 @@ class Field(threading.Thread):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         self.done = True
-                        
-            
-            
             self.drawGrid()
             #self.drawObstacles(self.grid.obstacles)
             pygame.display.flip()
 
             self.clock.tick(60)
-        self.terminate.set()
+        # self.terminate.set()
         pygame.quit()
         
     
@@ -60,14 +57,14 @@ class Field(threading.Thread):
             for j in range(0,self.grid.size[1]-self.stepV,self.stepV):
                 yPos = j// self.stepV
                 #print("Node type {self.grid.grid[xPos][yPos].nodeType} will be painted")
-                if self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_VISITED:
+                if(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_START):
+                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                elif self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_VISITED:
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_VISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_OBSTACLE):
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_OBSTACLE,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_GOAL):
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_GOAL,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
-                elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_START):
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_BEST_WAY):           
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 else:
