@@ -10,12 +10,8 @@ MARGIN = 2
 # ---
 """
 TO DO
-        - Implement contorller class that manages all other classes and starts the program
-                *also must kill algorithm thread when drawing thread is terminated
         
-        - create dialogs so that uses can choose size of grid, speed of animation, draw obstacles.
-                * first make it terminal based
-                * transform it to GUI 
+        - transform dialogs to GUI 
         
         - create random obstacle generator
                 
@@ -51,27 +47,27 @@ TO DO
 # grid.setObstacles(obstaclesFromTo)
 # game = Field((500*2,500*2),(RECT_HEIGHT+MARGIN)//5,(RECT_WIDTH+MARGIN)//5)
 
-GRID_WIDTH = 800
-GRID_HEIGHT = 800
-obstacleList =[]
-for i in range (2,round((GRID_WIDTH-1)/(RECT_WIDTH+MARGIN)/1.3)):
-        for j in range(2,round((GRID_HEIGHT-1)/(RECT_HEIGHT+MARGIN))):
-                num = random.random()
-                if(num >0.85):
+# GRID_WIDTH = 800
+# GRID_HEIGHT = 800
+# obstacleList =[]
+# for i in range (2,round((GRID_WIDTH-1)/(RECT_WIDTH+MARGIN)/1.3)):
+#         for j in range(2,round((GRID_HEIGHT-1)/(RECT_HEIGHT+MARGIN))):
+#                 num = random.random()
+#                 if(num >0.85):
 
-                        obstacleList.append((i,j,max(2,random.randint(i,i+3)),max(2,random.randint(j,j+3))))
+#                         obstacleList.append((i,j,max(2,random.randint(i,i+3)),max(2,random.randint(j,j+3))))
 
-grid = Grid((1,1),(30,40),(GRID_WIDTH,GRID_HEIGHT),RECT_WIDTH,RECT_HEIGHT,MARGIN)
-grid.setObstacles(obstacleList)
-game = Field((1000,1000))
+# grid = Grid((1,1),(30,40),(GRID_WIDTH,GRID_HEIGHT),RECT_WIDTH,RECT_HEIGHT,MARGIN)
+# grid.setObstacles(obstacleList)
+# game = Field((1000,1000))
 
 
-game.addGrid(grid)
-searchAlg = AStar(grid)
+# game.addGrid(grid)
+# searchAlg = AStar(grid)
 
-searchAlg.start()
-game.begin()
+# searchAlg.start()
+# game.begin()
 
-searchAlg.join()
+# searchAlg.join()
 # game.join() 
 

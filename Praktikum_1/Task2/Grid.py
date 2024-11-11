@@ -109,7 +109,7 @@ class Grid:
         """TO BE IMPLEMENTED !!!"""
         pass
                     
-    def translateCoordinates(self,x,y):
+    def translateCoordinates(self,x:int,y:int):
         """ translates coordinates from from user's point of view (0,0 is bottom left) to PyGame's point of view (0,0 is top left)
         coordinate entity is 1 tile, not 1 pixel. For example if tile is 10x10 pixels, then coordinate(3,3) is at (30,30) pixels   
 
