@@ -21,6 +21,7 @@ class Field():
         self.font = None # text font
         
         self.done = False
+        self.readyToStartAlgorithm = False
         pygame.display.set_caption("My Game")
         self.clock = pygame.time.Clock()
         
@@ -41,6 +42,21 @@ class Field():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                         self.done = True
+                else:
+                    if event.type == pygame.MOUSEBUTTONDOWN or pygame.MOUSEMOTION:
+                        left,middle,right = pygame.mouse.get_pressed()
+                        x,y = pygame.mouse.get_pos()
+                        
+                        # now tile index calculation is awkward, write function that will translate the position to tile index
+                        xPos = (x - self.stepH) // self.stepH
+                        yPos = y// self.stepV
+                        if left and self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_UNVISITED:
+                            self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_OBSTACLE
+                        elif right and self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_OBSTACLE:
+                            self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+                        elif not self.readyToStartAlgorithm and middle:
+                            self.readyToStartAlgorithm = True
+                        
             self.drawGrid()
             #self.drawObstacles(self.grid.obstacles)
             pygame.display.flip()

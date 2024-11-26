@@ -48,12 +48,20 @@ class Controller():
         except:
             self.algorithm = AStar(self.grid,self.SPEED_FAST)
     
-    # TEMPORARY. Rewrite it to real dialog. Make current code into random maze generator
-    def setAndClearObstaclesDialog(self):
-        """User sees grid just like it will be in dialog. everything is drawn in real time (just like algorithm itself).
-        User uses their mouse to create obstacles. It's done by clicking left mouse button over the grid and dragging the mouse.
-        When right mouse button is clicked and mouse is being dragged, obstacles are removed.
-        """
+    # # TEMPORARY. Rewrite it to real dialog. Make current code into random maze generator
+    # def setAndClearObstaclesDialog(self):
+    #     """User sees grid just like it will be in dialog. everything is drawn in real time (just like algorithm itself).
+    #     User uses their mouse to create obstacles. It's done by clicking left mouse button over the grid and dragging the mouse.
+    #     When right mouse button is clicked and mouse is being dragged, obstacles are removed.
+    #     """
+    #     # self.grid.setObstacles([]) #no obstacles at first
+    #     pygame.mouse.set_visible(True)
+    #     self.field.begin()
+    #     # pygame.mouse.set_visible(False)
+        
+    
+    def setObstaclesRandomly(self):
+        """Very basic random obstacle generator. Can generate obstacles that block destination."""
         obstacleList =[]
         for i in range (2,round((self.grid.size[0]-1)/(self.grid.rectWidth+self.grid.margin)/1.3)):
                 for j in range(2,round((self.grid.size[1]-1)/(self.grid.rectHeight+self.grid.margin))):
@@ -72,10 +80,12 @@ class Controller():
     def begin(self):
         """start algorithm and it's visualization
         """
-        self.algorithm.start()
         algorithmThreadKiller = threading.Thread(target=self.killAlgorithmThread)
         algorithmThreadKiller.start()
-        self.field.begin()
+        while not self.field.readyToStartAlgorithm:
+            continue
+        self.algorithm.start()
+        
     
     def killAlgorithmThread(self):
         """Used for interrupting thread with A* algorithm. Otherwise it will run on the background until it finishes
@@ -90,6 +100,7 @@ if __name__ == '__main__':
     game = Controller()
     game.setGridSizeDialog()
     game.setAnimationSpeedDialog()
-    game.setAndClearObstaclesDialog()
-    game.begin()
+    threading.Thread(target=game.begin).start()
+    pygame.mouse.set_visible(True)
+    game.field.begin()
     
