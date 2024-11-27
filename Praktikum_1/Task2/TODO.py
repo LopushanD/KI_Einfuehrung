@@ -1,21 +1,19 @@
 
 """
 TO DO
-        
-        - create function that translates absolute position (x,y) to tile index
+        - think about restrictions of parameters that can be handled. Now you can freely choose any parameters for field and grid, that is prone to cause bugs 
         
         - change the classes so, that they can be more comfortably controlled from Controller class
                 * like add specific attribut to classes that Controller class can look at, to know that should be done next 
         
-        - fix bugs with out range indexing when manipulating tiles
+        
+        - Now when there's no path, you get expection. Turn it into pop up, that tells that there's no way available
         
         - go through code and program architecture and refactor it where needed
         
         - write documentation for the program
         
         - upgrade random obstacle generator
-                
-        - Make the program work not only with square grid, but with rechtangular one too (where its height =/= its width)
         
         - transform dialogs to GUI 
 """

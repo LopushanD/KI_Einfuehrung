@@ -1,7 +1,8 @@
 from Node import *
 import time
+from utils import translateCoordinatesToPyGame
 class Grid:
-    def __init__(self,start:tuple,goal:tuple,size=(500,500),rectWidth=20,rectHeight=20,margin=2,stepCost=1):
+    def __init__(self,start:tuple,goal:tuple,sizeH:int,sizeV:int,rectWidth=18,rectHeight=18,margin=2,stepCost=1):
         self.margin = margin
         self.rectHeight = rectHeight
         self.rectWidth = rectWidth
@@ -14,13 +15,14 @@ class Grid:
         self.COLOR_NODE_START = (255,255,0)#yellow 
         self.COLOR_NODE_BEST_WAY = (0,200,200)# cyan
         self.COLOR_BACKGROUND = (0,0,0)# black
-        #padding is equals to size of one rectangle
-        self.size = (size[0]-self.rectHeight,size[1]-self.rectWidth)
+        # it goes (VerticalSize,HorizontalSize)
+        self.sizeH = sizeH
+        self.sizeV = sizeV
         
         
         #these numbers are based on the numbers that user sees near the grid 
-        self.start = self.translateCoordinates(start[0],start[1])
-        self.goal = self.translateCoordinates(goal[0],goal[1])
+        self.start = translateCoordinatesToPyGame(start[0],start[1],self)
+        self.goal = translateCoordinatesToPyGame(goal[0],goal[1],self)
         #0 - unvisited tile, 1 - visited tile, 2 - obstacle tile
         self.grid = [[]]
         # self.initNodes()
@@ -39,8 +41,8 @@ class Grid:
         self.grid[self.goal[0]][self.goal[1]].posDim2 = self.goal[1]
         
     def initNodes(self):
-        sizeX = self.size[0]//(self.rectWidth+self.margin)
-        sizeY = self.size[1]//(self.rectHeight+self.margin)
+        sizeX = self.sizeV//(self.rectWidth+self.margin)
+        sizeY = self.sizeH//(self.rectHeight+self.margin)
         #creates new Node instance in each grid tile
         self.grid = [[Node(i,j) for j in range(sizeY)] for i in range(sizeX)]
         
@@ -95,8 +97,8 @@ class Grid:
     #obstacle numbers are based on the numbers that user sees near the grid 
     def setObstacles(self,obstacles:list[tuple]):
         for obstacle in obstacles:
-            xStart,yStart = self.translateCoordinates(obstacle[0],obstacle[3])
-            xEnd,yEnd = self.translateCoordinates(obstacle[2],obstacle[1])
+            xStart,yStart = translateCoordinatesToPyGame(obstacle[0],obstacle[3],self)
+            xEnd,yEnd = translateCoordinatesToPyGame(obstacle[2],obstacle[1],self)
             
             for i in range(xStart,xEnd):
                 for j in range(yStart+1,yEnd+1):
@@ -104,21 +106,6 @@ class Grid:
                     self.grid[i][j].nodeType = self.grid[i][j].NODE_OBSTACLE
                     self.grid[i][j].posDim1 = i
                     self.grid[i][j].posDim2 = j
-                    
-    def clearObstacles(self,obstacles:list[tuple]):
-        """TO BE IMPLEMENTED !!!"""
-        pass
-                    
-    def translateCoordinates(self,x:int,y:int):
-        """ translates coordinates from from user's point of view (0,0 is bottom left) to PyGame's point of view (0,0 is top left)
-        coordinate entity is 1 tile, not 1 pixel. For example if tile is 10x10 pixels, then coordinate(3,3) is at (30,30) pixels   
-
-        Args:
-            x,y: coordinates from user's point of view (0,0 is bottom left)
-            
-        Returns coordinates from PyGame's point of view (0,0 is top left)
-        """
-        return (x-1,self.size[1]//(self.rectHeight+self.margin)-y)
     
     #go from end to begin marking best steps
     def markAsBestWay(self,node:Node):
@@ -146,3 +133,4 @@ class Grid:
             bestParent = parentsToCheck[0]
             nextNode.nodeType = nextNode.NODE_BEST_WAY
             nextNode = bestParent
+

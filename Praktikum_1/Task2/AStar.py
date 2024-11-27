@@ -1,29 +1,7 @@
 from Grid import *
 import threading
 import time
-import heapq
-class Queue:
-    def __init__(self):
-        
-        self.q = []
-    
-    def enque(self,element:"Node"):
-        heapq.heappush(self.q,(element))
-    
-    
-    def qNotEmpty(self)-> bool:
-        if(len(self.q)>0):
-            return True
-        return False
-            
-    def deque(self) -> "Node":
-        return heapq.heappop(self.q)
-    
-    def isInQueue(self,element:object) -> bool:
-        if element in self.q:
-            return True
-        return False
-    
+from utils import Queue
     
 class AStar(threading.Thread):
     
