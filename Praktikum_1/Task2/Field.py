@@ -39,6 +39,8 @@ class Field():
     def begin(self):
         self.screen.fill(self.background)
         self.drawNumbers()
+        startSet: bool = False
+        endSet: bool = False
         while not self.done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -57,14 +59,48 @@ class Field():
                         # now tile index calculation is awkward, write function that will translate the position to tile index
                         if(utils.isPositionOnGrid(x,y,self)):
                             xPos,yPos = utils.getIndexesOfTile(x,y,self)
-                            if(event.type == pygame.KEYDOWN):
-                                print(f"Actual tile indexes that are written to:{xPos}, {yPos}")
+                            # if(event.type == pygame.KEYDOWN):
+                            #     print(f"Actual tile indexes that are written to:{xPos}, {yPos}")
                             if left and self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_UNVISITED:
                                 self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_OBSTACLE
                             elif right and self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_OBSTACLE:
                                 self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
-                            elif not self.readyToStartAlgorithm and middle:
-                                self.readyToStartAlgorithm = True
+                            elif not self.readyToStartAlgorithm:
+                                # there's png file, where code is depicted as state machine
+                                if middle and startSet and endSet:
+                                    self.readyToStartAlgorithm = True
+                                else:
+                                    if left and event.type == pygame.MOUSEBUTTONDOWN:
+                                        if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_OBSTACLE:
+                                            if not startSet:
+                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_START
+                                                self.grid.start = (xPos,yPos)
+                                                startSet = True
+                                            elif not endSet:
+                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_GOAL
+                                                self.grid.goal = (xPos,yPos)
+                                                endSet = True
+                                            else:
+                                                continue    
+                                        elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_START:
+                                            startSet = False
+                                            if not endSet:
+                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_GOAL
+                                                self.grid.goal = (xPos,yPos)
+                                                endSet = True
+                                            else:
+                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+                                                
+                                        elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_GOAL:
+                                            endSet = False
+                                            self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+                                    elif right:
+                                        if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_START:
+                                            startSet = False
+                                        elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_GOAL:
+                                            endSet = False
+                                        self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+                                
                         
             self.drawGrid()
             #self.drawObstacles(self.grid.obstacles)

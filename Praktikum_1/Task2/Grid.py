@@ -2,7 +2,7 @@ from Node import *
 import time
 from utils import translateCoordinatesToPyGame
 class Grid:
-    def __init__(self,start:tuple,goal:tuple,sizeH:int,sizeV:int,rectWidth=18,rectHeight=18,margin=2,stepCost=1):
+    def __init__(self,sizeH:int,sizeV:int,rectWidth=18,rectHeight=18,margin=2,stepCost=1):
         self.margin = margin
         self.rectHeight = rectHeight
         self.rectWidth = rectWidth
@@ -21,8 +21,8 @@ class Grid:
         
         
         #these numbers are based on the numbers that user sees near the grid 
-        self.start = translateCoordinatesToPyGame(start[0],start[1],self)
-        self.goal = translateCoordinatesToPyGame(goal[0],goal[1],self)
+        self.start = None#translateCoordinatesToPyGame(start[0],start[1],self)
+        self.goal = None#translateCoordinatesToPyGame(goal[0],goal[1],self)
         #0 - unvisited tile, 1 - visited tile, 2 - obstacle tile
         self.grid = [[]]
         # self.initNodes()
@@ -31,14 +31,14 @@ class Grid:
     def initGrid(self):
         self.initNodes()
         
-        self.grid[self.start[0]][self.start[1]].nodeType = self.grid[self.start[0]][self.start[1]].NODE_START 
-        self.grid[self.start[0]][self.start[1]].posDim1 = self.start[0]
-        self.grid[self.start[0]][self.start[1]].posDim2 = self.start[1]
+        # self.grid[self.start[0]][self.start[1]].nodeType = self.grid[self.start[0]][self.start[1]].NODE_START 
+        # self.grid[self.start[0]][self.start[1]].posDim1 = self.start[0]
+        # self.grid[self.start[0]][self.start[1]].posDim2 = self.start[1]
         
         
-        self.grid[self.goal[0]][self.goal[1]].nodeType = self.grid[self.goal[0]][self.goal[1]].NODE_GOAL
-        self.grid[self.goal[0]][self.goal[1]].posDim1 = self.goal[0]
-        self.grid[self.goal[0]][self.goal[1]].posDim2 = self.goal[1]
+        # self.grid[self.goal[0]][self.goal[1]].nodeType = self.grid[self.goal[0]][self.goal[1]].NODE_GOAL
+        # self.grid[self.goal[0]][self.goal[1]].posDim1 = self.goal[0]
+        # self.grid[self.goal[0]][self.goal[1]].posDim2 = self.goal[1]
         
     def initNodes(self):
         sizeX = self.sizeV//(self.rectWidth+self.margin)

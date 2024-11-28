@@ -9,23 +9,33 @@ class AStar(threading.Thread):
         self.SPEED_SLOW=1
         self.SPEED_FAST=2
         self.SPEED_INSTANT=3
+        
         super().__init__()
-        self.grid = grid
-        self.terminate = threading.Event()
-        self.startNode:Node = grid.grid[grid.start[0]][grid.start[1]]
-        self.endNode = grid.grid[grid.goal[0]][grid.goal[1]]
-        self.open = Queue()
-        self.stepCost = grid.stepCost
         
         self.algorithmSpeed = None
         self.setAlgorithmSpeed(algorithmSpeed)
         
-        self.startNode.setCost(0)
-        self.startNode.addParent(self.startNode)
-        self.open.enque(self.startNode)
+        self.grid = grid
+        self.startNode:Node = None #grid.grid[grid.start[0]][grid.start[1]]
+        self.endNode =  None #grid.grid[grid.goal[0]][grid.goal[1]]
+        
+        self.terminate = threading.Event()
+        
+        self.open = Queue()
+        self.stepCost = grid.stepCost
+        
         
     def interruptThread(self):
         self.terminate.set()
+    
+    def setStartAndEndPoint(self):
+        self.endNode = self.grid.grid[self.grid.goal[0]][self.grid.goal[1]]
+        
+        self.startNode:Node = self.grid.grid[self.grid.start[0]][self.grid.start[1]]
+        self.startNode.setCost(0)
+        self.startNode.addParent(self.startNode)
+        
+        self.open.enque(self.startNode)
         
     def setAlgorithmSpeed(self,speed)->None:
         if(speed ==self.SPEED_SLOW):
@@ -38,6 +48,7 @@ class AStar(threading.Thread):
             raise(RuntimeError.add_note("Wrong algorithm speed was given as a parameter"))
         
     def run(self):
+        self.setStartAndEndPoint()
         self.search()
         # self.startNode.setNodeType(self.startNode.NODE_START)
         self.grid.markAsBestWay(self.endNode)
