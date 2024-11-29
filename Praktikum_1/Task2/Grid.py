@@ -23,11 +23,10 @@ class Grid:
         self.goal = None
 
         self.grid = [[]]
-        self.addNodesToGrid()
+        self.populateGridWithClearNodes()
         
-    def addNodesToGrid(self):
-        """populates empty grid with nodes
-        """
+    def populateGridWithClearNodes(self):
+        
         sizeX = self.sizeV//(self.rectWidth+self.margin)
         sizeY = self.sizeH//(self.rectHeight+self.margin)
         #creates new Node instance in each grid tile

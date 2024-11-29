@@ -4,14 +4,14 @@ import time
 from utils import Queue
     
 class AStar(threading.Thread):
-    
     def __init__(self,grid:Grid,algorithmSpeed:int):
+        super().__init__()
+        
         self.SPEED_SLOW=1
         self.SPEED_FAST=2
         self.SPEED_INSTANT=3
         
-        super().__init__()
-        
+        self.daemon = True
         self.algorithmSpeed = None
         self.setAlgorithmSpeed(algorithmSpeed)
         
@@ -23,7 +23,6 @@ class AStar(threading.Thread):
         
         self.open = Queue()
         self.stepCost = grid.stepCost
-        
         
     def interruptThread(self):
         self.terminate.set()
@@ -78,12 +77,3 @@ class AStar(threading.Thread):
                         neighboor.addParent(currentNode)
                         neighboor.setVisited()
                         self.open.enque(neighboor)
-            
-            
-                        
-                        
-                        
-            
-                
-        
-        

@@ -44,29 +44,34 @@ class Controller():
             self.algorithm = AStar(self.grid,speed)
         except:
             self.algorithm = AStar(self.grid,self.SPEED_FAST)
-    
-    def begin(self):
-        """start algorithm and it's visualization
-        """
-        algorithmThreadKiller = threading.Thread(target=self.killAlgorithmThread)
-        algorithmThreadKiller.start()
-        while not self.field.readyToStartAlgorithm:
-            continue
-        self.algorithm.start()
-    
-    def killAlgorithmThread(self):
+ 
+    def killOrRestartAlgorithmThread(self):
         """Used for interrupting thread with A* algorithm. Otherwise it will run on the background until it finishes
         """
         while True:
-            if self.field.done == True:
-                self.algorithm.interruptThread()
+            # wait until user finishes with setting up
+            while not self.field.readyToStartAlgorithm:
+                continue
+            # start/rerun thread. In case of rerunning, it cannot be done directly, so we need to create new instance
+            oldSpeed = self.algorithm.algorithmSpeed
+            self.algorithm = AStar(self.grid,self.SPEED_INSTANT) # speed here is just placeholder
+            self.algorithm.algorithmSpeed = oldSpeed
+            self.algorithm.start()
+            # wait until user closes the window or resets everything
+            while self.field.readyToStartAlgorithm and not self.field.endProgram:
+                continue
+            
+            self.algorithm.interruptThread()
+            if self.field.endProgram == True:
                 break
-    
+            
 if __name__ == '__main__':
     game = Controller()
     game.setGridSizeDialog()
     game.setAnimationSpeedDialog()
-    threading.Thread(target=game.begin).start()
+    algorithmThreadHandler = threading.Thread(target=game.killOrRestartAlgorithmThread)
+    #configure this thread to be a daemon, so that it closes automatically when main thread is closed.
+    algorithmThreadHandler.daemon = True
+    algorithmThreadHandler.start()
     pygame.mouse.set_visible(True)
     game.field.begin()
-    

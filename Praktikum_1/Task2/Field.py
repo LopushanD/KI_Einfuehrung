@@ -24,7 +24,7 @@ class Field():
         self.fontSize = None
         self.font = None # text font
         
-        self.done = False
+        self.endProgram = False
         self.readyToStartAlgorithm = False
         pygame.display.set_caption("My Game")
         self.clock = pygame.time.Clock()
@@ -48,30 +48,35 @@ class Field():
         self.drawNumbers()
         startSet: bool = False
         goalSet: bool = False
-        while not self.done:
+        while not self.endProgram:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                        self.done = True
+                        self.endProgram = True
                 else:
                     if event.type == pygame.MOUSEBUTTONDOWN or pygame.MOUSEMOTION:
                         left,middle,right = pygame.mouse.get_pressed()
                         xPos,yPos = pygame.mouse.get_pos()
-                            
+                        
                         if(utils.isPositionOnGrid(xPos,yPos,self)):
                             xIndex,yIndex = utils.getIndexesOfTile(xPos,yPos,self)
-                            
                             #draw obstacle
                             if left and self.grid.grid[xIndex][yIndex].nodeType ==self.grid.grid[xIndex][yIndex].NODE_UNVISITED:
                                 self.grid.grid[xIndex][yIndex].nodeType = self.grid.grid[xIndex][yIndex].NODE_OBSTACLE
                             #clear obstacle
                             elif right and self.grid.grid[xIndex][yIndex].nodeType == self.grid.grid[xIndex][yIndex].NODE_OBSTACLE:
                                 self.grid.grid[xIndex][yIndex].nodeType = self.grid.grid[xIndex][yIndex].NODE_UNVISITED
-                            #prepare start, goal and obstacles before starting algorithm 
-                            elif not self.readyToStartAlgorithm:
+                            #reset everything if algorithm is running
+                            elif self.readyToStartAlgorithm:
+                                if middle:
+                                    self.readyToStartAlgorithm = startSet = goalSet = False
+                                    self.grid.populateGridWithClearNodes()
+                            #prepare start, goal and obstacles before starting algorithm
+                            else:
                                 if middle and startSet and goalSet:
                                     self.readyToStartAlgorithm = True
                                 else:
-                                    startSet,goalSet = self._prepareNodesOnGrid(left,right,event.type,xIndex,yIndex,startSet,goalSet)
+                                    startSet,goalSet = self._prepareNodesOnGrid(left,right,event.type,xIndex,yIndex,startSet,goalSet)                         
+                                    
             self.updateGrid()
             pygame.display.flip()
             self.clock.tick(60)
