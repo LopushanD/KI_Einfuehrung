@@ -5,9 +5,9 @@ import utils
         
 # field is where our drawing takes place
 class Field():
+    """this class handles all drawing on the screen.
+    """
     def __init__(self,size:tuple[int,int],paddingVertical = 20,paddingHorizontal=20,background=(0,0,0),foreground=(255,255,255)):
-        # super().__init__()
-        # self.terminate = threading.Event()
         pygame.init()
         self.paddingV = paddingVertical
         self.paddingH = paddingHorizontal
@@ -30,17 +30,24 @@ class Field():
         self.clock = pygame.time.Clock()
         
     def addGrid(self,grid:Grid):
+        """adds grid to the Field
+
+        Args:
+            grid (Grid): grid that holds all nodes
+        """
         self.grid = grid
         self.stepV = self.grid.rectHeight+self.grid.margin
         self.stepH = self.grid.rectWidth+self.grid.margin
-        self.fontSize = round(self.grid.rectWidth*1)
+        self.fontSize = self.grid.rectWidth
         self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
     
     def begin(self):
+        """starts drawing on screen
+        """
         self.screen.fill(self.background)
         self.drawNumbers()
         startSet: bool = False
-        endSet: bool = False
+        goalSet: bool = False
         while not self.done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -48,74 +55,35 @@ class Field():
                 else:
                     if event.type == pygame.MOUSEBUTTONDOWN or pygame.MOUSEMOTION:
                         left,middle,right = pygame.mouse.get_pressed()
-                        x,y = pygame.mouse.get_pos()
-                        #its just for debugging purposes, remove it later
-                        if(event.type == pygame.KEYDOWN):
-                            print(f"cursor position(x,y): {x}, {y}")
-                            print(f"field size in pixels(x,y): {self.sizeH}, {self.sizeV}")
-                            print(f"grid size in pixels(x,y): {self.grid.sizeH}, {self.grid.sizeV}")
-                            print(f"Indexes of the Tile(horizontal, vertical): {utils.getIndexesOfTile(x,y,self)}")
-                            print(f"grid size in number of tiles(x,y): {len(self.grid.grid)}, {len(self.grid.grid)}")
-                        # now tile index calculation is awkward, write function that will translate the position to tile index
-                        if(utils.isPositionOnGrid(x,y,self)):
-                            xPos,yPos = utils.getIndexesOfTile(x,y,self)
-                            # if(event.type == pygame.KEYDOWN):
-                            #     print(f"Actual tile indexes that are written to:{xPos}, {yPos}")
-                            if left and self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_UNVISITED:
-                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_OBSTACLE
-                            elif right and self.grid.grid[xPos][yPos].nodeType == self.grid.grid[xPos][yPos].NODE_OBSTACLE:
-                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+                        xPos,yPos = pygame.mouse.get_pos()
+                            
+                        if(utils.isPositionOnGrid(xPos,yPos,self)):
+                            xIndex,yIndex = utils.getIndexesOfTile(xPos,yPos,self)
+                            
+                            #draw obstacle
+                            if left and self.grid.grid[xIndex][yIndex].nodeType ==self.grid.grid[xIndex][yIndex].NODE_UNVISITED:
+                                self.grid.grid[xIndex][yIndex].nodeType = self.grid.grid[xIndex][yIndex].NODE_OBSTACLE
+                            #clear obstacle
+                            elif right and self.grid.grid[xIndex][yIndex].nodeType == self.grid.grid[xIndex][yIndex].NODE_OBSTACLE:
+                                self.grid.grid[xIndex][yIndex].nodeType = self.grid.grid[xIndex][yIndex].NODE_UNVISITED
+                            #prepare start, goal and obstacles before starting algorithm 
                             elif not self.readyToStartAlgorithm:
-                                # there's png file, where code is depicted as state machine
-                                if middle and startSet and endSet:
+                                if middle and startSet and goalSet:
                                     self.readyToStartAlgorithm = True
                                 else:
-                                    if left and event.type == pygame.MOUSEBUTTONDOWN:
-                                        if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_OBSTACLE:
-                                            if not startSet:
-                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_START
-                                                self.grid.start = (xPos,yPos)
-                                                startSet = True
-                                            elif not endSet:
-                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_GOAL
-                                                self.grid.goal = (xPos,yPos)
-                                                endSet = True
-                                            else:
-                                                continue    
-                                        elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_START:
-                                            startSet = False
-                                            if not endSet:
-                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_GOAL
-                                                self.grid.goal = (xPos,yPos)
-                                                endSet = True
-                                            else:
-                                                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
-                                                
-                                        elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_GOAL:
-                                            endSet = False
-                                            self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
-                                    elif right:
-                                        if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_START:
-                                            startSet = False
-                                        elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_GOAL:
-                                            endSet = False
-                                        self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
-                                
-                        
-            self.drawGrid()
-            #self.drawObstacles(self.grid.obstacles)
+                                    startSet,goalSet = self._prepareNodesOnGrid(left,right,event.type,xIndex,yIndex,startSet,goalSet)
+            self.updateGrid()
             pygame.display.flip()
-
             self.clock.tick(60)
-        # self.terminate.set()
         pygame.quit()
+        
+
     
-    def drawGrid(self):
-        #we begin not from 0, but from 1.5 Cube width, because we need space for vertical numbers(row numbers). 0.5 Cube width is padding between number and cubes
+    def updateGrid(self):
         for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
-            index_x = max(0,((i-self.paddingH)// self.stepH)) 
+            index_x = utils.getXIndexOfTile(i,self)
             for j in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
-                index_y = max(0,((j-self.paddingV)// self.stepV) )
+                index_y = utils.getYIndexOfTile(j,self)
                 
                 # print(f"Indexes are: {index_x}, {index_y} \n Size of grid: {len(self.grid.grid)}, {len(self.grid.grid)}")
                 if(self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_START):
@@ -132,14 +100,15 @@ class Field():
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
         
     def drawNumbers(self):
+        """draws numbers on x and y axes
+        """
         #counter is a number drawn. For vertical numbers it goes from maximum to zero, for horizontal from zero to maximum
         counter = (self.grid.sizeV)//self.stepV
         
-        verticalOffsetFromCubeLeftBottom = self.fontSize//2
+        verticalOffsetFromCubeLeftBottom = 0 #self.fontSize//4
         maxRowNumber = counter
         while(maxRowNumber//10 >0):
-            self.fontSize = round(self.fontSize*0.75)
-            verticalOffsetFromCubeLeftBottom = self.fontSize//2
+            self.paddingH+=self.fontSize
             maxRowNumber = maxRowNumber//10
         self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
         
@@ -152,17 +121,48 @@ class Field():
         counter=1
         
         #setup correct font size for horizontal numbers, so that everything fits
-        horizontalOffsetFromCubeLeftBottom = self.fontSize//2
-        maxColumnNumber = (self.grid.sizeH)//self.stepH
-        while(maxColumnNumber//10 >0):
-            self.fontSize = round(self.fontSize*0.75)
-            horizontalOffsetFromCubeLeftBottom = self.fontSize//2
-            maxColumnNumber = maxColumnNumber//10
-        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
-        
+        maxColNumber = (self.grid.sizeH)//self.stepH
+        while self.font.size(str(maxColNumber))[0] > self.grid.rectWidth:
+                self.fontSize = self.fontSize-1
+                self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        horizontalOffsetFromCubeLeftBottom = 0
         # draw horizontal numbers
         for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
             textH = self.font.render(str(counter), True,self.foreground, self.background)                        
             self.screen.blit(textH,(i+horizontalOffsetFromCubeLeftBottom,self.grid.sizeV+self.paddingV+self.grid.rectHeight//2))
             counter+=1
 
+    def _prepareNodesOnGrid(self,left,right,eventType,xPos,yPos,startSet,goalSet)-> tuple[bool,bool]:
+        # there's png file, where code is depicted as state machine
+        if left and eventType == pygame.MOUSEBUTTONDOWN:
+            if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_OBSTACLE:
+                if not startSet:
+                    self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_START
+                    self.grid.start = (xPos,yPos)
+                    startSet = True
+                elif not goalSet:
+                    self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_GOAL
+                    self.grid.goal = (xPos,yPos)
+                    goalSet = True
+                else:
+                    #do nothing
+                    pass    
+            elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_START:
+                startSet = False
+                if not goalSet:
+                    self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_GOAL
+                    self.grid.goal = (xPos,yPos)
+                    goalSet = True
+                else:
+                    self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+                    
+            elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_GOAL:
+                goalSet = False
+                self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+        elif right:
+            if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_START:
+                startSet = False
+            elif self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_GOAL:
+                goalSet = False
+            self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_UNVISITED
+        return (startSet,goalSet)

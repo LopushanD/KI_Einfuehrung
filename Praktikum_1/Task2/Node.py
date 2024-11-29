@@ -1,7 +1,6 @@
 import math
 class Node:
     def __init__(self,pos1:int,pos2:int):
-        
         self.NODE_UNVISITED=0
         self.NODE_VISITED=1
         self.NODE_OBSTACLE=2

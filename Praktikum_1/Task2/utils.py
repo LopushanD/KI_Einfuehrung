@@ -22,7 +22,7 @@ class Queue:
             return True
         return False
     
-def translateCoordinatesToPyGame(x:int,y:int,grid):
+def translateIndexesToPyGame(x:int,y:int,grid):
     """ translates coordinates from from user's point of view (0,0 is bottom left) to PyGame's point of view (0,0 is top left)
     coordinate entity is 1 tile, not 1 pixel. For example if tile is 10x10 pixels, then coordinate(3,3) is at (30,30) pixels 
 
@@ -51,9 +51,25 @@ def getIndexesOfTile(x:int,y:int,field)->tuple[int,int]:
         tuple[int,int]: (horizontal index, vertical index)
     """
     
-    index_x = max(0,(x-field.paddingH)//field.stepH )
-    index_y = max(0,(y-field.paddingV)//field.stepV )
+    index_x = getXIndexOfTile(x,field)
+    index_y = getYIndexOfTile(y,field)
     return (index_x,index_y)
+
+def getXIndexOfTile(x:int,field)->int:
+    """Takes x coordinate and returns index x of corresponding tile under it. This method is not protected from Out of Index Exception 
+
+    Returns:
+        int: horizontal index
+    """
+    return max(0,(x-field.paddingH)//field.stepH )
+
+def getYIndexOfTile(y:int,field)->int:
+    """Takes y coordinate and returns index y of corresponding tile under it. This method is not protected from Out of Index Exception 
+
+    Returns:
+        int: vertical index
+    """
+    return max(0,(y-field.paddingV)//field.stepV )
 
 def isPositionOnGrid(x:int,y:int,field)->bool:
     isOnGrid_x: bool = x>field.paddingH and x<field.paddingH+field.grid.sizeH

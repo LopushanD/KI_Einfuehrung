@@ -1,6 +1,6 @@
 from Node import *
 import time
-from utils import translateCoordinatesToPyGame
+from utils import translateIndexesToPyGame
 class Grid:
     def __init__(self,sizeH:int,sizeV:int,rectWidth=18,rectHeight=18,margin=2,stepCost=1):
         self.margin = margin
@@ -15,32 +15,19 @@ class Grid:
         self.COLOR_NODE_START = (255,255,0)#yellow 
         self.COLOR_NODE_BEST_WAY = (0,200,200)# cyan
         self.COLOR_BACKGROUND = (0,0,0)# black
-        # it goes (VerticalSize,HorizontalSize)
+
         self.sizeH = sizeH
         self.sizeV = sizeV
-        
-        
-        #these numbers are based on the numbers that user sees near the grid 
-        self.start = None#translateCoordinatesToPyGame(start[0],start[1],self)
-        self.goal = None#translateCoordinatesToPyGame(goal[0],goal[1],self)
-        #0 - unvisited tile, 1 - visited tile, 2 - obstacle tile
+         
+        self.start = None
+        self.goal = None
+
         self.grid = [[]]
-        # self.initNodes()
-        self.initGrid()
+        self.addNodesToGrid()
         
-    def initGrid(self):
-        self.initNodes()
-        
-        # self.grid[self.start[0]][self.start[1]].nodeType = self.grid[self.start[0]][self.start[1]].NODE_START 
-        # self.grid[self.start[0]][self.start[1]].posDim1 = self.start[0]
-        # self.grid[self.start[0]][self.start[1]].posDim2 = self.start[1]
-        
-        
-        # self.grid[self.goal[0]][self.goal[1]].nodeType = self.grid[self.goal[0]][self.goal[1]].NODE_GOAL
-        # self.grid[self.goal[0]][self.goal[1]].posDim1 = self.goal[0]
-        # self.grid[self.goal[0]][self.goal[1]].posDim2 = self.goal[1]
-        
-    def initNodes(self):
+    def addNodesToGrid(self):
+        """populates empty grid with nodes
+        """
         sizeX = self.sizeV//(self.rectWidth+self.margin)
         sizeY = self.sizeH//(self.rectHeight+self.margin)
         #creates new Node instance in each grid tile
@@ -95,10 +82,15 @@ class Grid:
               
         
     #obstacle numbers are based on the numbers that user sees near the grid 
-    def setObstacles(self,obstacles:list[tuple]):
+    def depricated_setObstacles(self,obstacles:list[tuple]):
+        """depdicated function that sets obstacles given in the list.
+
+        Args:
+            obstacles (list[tuple]): list of (x,y) indexes of obstacles from USER's point of view (where indexing begins from 1 and 1,1 is on the left bottom of the grid ) 
+        """
         for obstacle in obstacles:
-            xStart,yStart = translateCoordinatesToPyGame(obstacle[0],obstacle[3],self)
-            xEnd,yEnd = translateCoordinatesToPyGame(obstacle[2],obstacle[1],self)
+            xStart,yStart = translateIndexesToPyGame(obstacle[0],obstacle[3],self)
+            xEnd,yEnd = translateIndexesToPyGame(obstacle[2],obstacle[1],self)
             
             for i in range(xStart,xEnd):
                 for j in range(yStart+1,yEnd+1):
@@ -121,7 +113,7 @@ class Grid:
         
         while True:
             #just for visualization purposes
-            time.sleep(0.08)
+            # time.sleep(0.08)
             if(nextNode == nextNode.parents[0]):
                 break
             parentsToCheck = []
