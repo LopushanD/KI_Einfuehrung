@@ -2,7 +2,7 @@
 """
 TO DO
         
-        - now some combinations of size (field or grid or tile), padding, margin lead to out of index error. look into it.
+        - make terminal gui that helps user to set up the program (style like linux)
         
         - write documentation for the program
         

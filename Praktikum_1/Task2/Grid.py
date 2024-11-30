@@ -16,8 +16,8 @@ class Grid:
         self.COLOR_NODE_BEST_WAY = (0,200,200)# cyan
         self.COLOR_BACKGROUND = (0,0,0)# black
 
-        self.sizeH = sizeH
-        self.sizeV = sizeV
+        self.sizeH = self.findNextGoodNumberForGridSize(sizeH,rectWidth+margin)
+        self.sizeV = self.findNextGoodNumberForGridSize(sizeV,rectHeight+margin)
          
         self.start = None
         self.goal = None
@@ -25,10 +25,25 @@ class Grid:
         self.grid = [[]]
         self.populateGridWithClearNodes()
         
+    def findNextGoodNumberForGridSize(self,size:int,step:int)-> int:
+        """calculates good numbers for grid size, as poorly chosen dimensions can lead to out of index error.
+
+        Args:
+            size (int): dimension of grid (x or y)
+            step (int): distance between left top corners of tiles
+
+        Returns:
+            int: number that won't cause problems when accessing tiles in the grid
+        """
+        if size % step != 0:
+           if size % step <5:
+               return step * (size//step)
+           return step*(size//(step+1))
+        return size
+            
     def populateGridWithClearNodes(self):
-        
-        sizeX = self.sizeV//(self.rectWidth+self.margin)
-        sizeY = self.sizeH//(self.rectHeight+self.margin)
+        sizeX = self.sizeH//(self.rectWidth+self.margin)
+        sizeY = self.sizeV//(self.rectHeight+self.margin)
         #creates new Node instance in each grid tile
         self.grid = [[Node(i,j) for j in range(sizeY)] for i in range(sizeX)]
         
@@ -79,7 +94,6 @@ class Grid:
             self.grid[sizeX-1][j].addNeighboor(self.grid[sizeX-1][j+1])
             self.grid[sizeX-1][j].addNeighboor(self.grid[sizeX-2][j])
               
-        
     #obstacle numbers are based on the numbers that user sees near the grid 
     def depricated_setObstacles(self,obstacles:list[tuple]):
         """depdicated function that sets obstacles given in the list.
@@ -124,4 +138,3 @@ class Grid:
             bestParent = parentsToCheck[0]
             nextNode.nodeType = nextNode.NODE_BEST_WAY
             nextNode = bestParent
-

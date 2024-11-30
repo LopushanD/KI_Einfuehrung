@@ -7,39 +7,30 @@ import utils
 class Field():
     """this class handles all drawing on the screen.
     """
-    def __init__(self,size:tuple[int,int],paddingVertical = 20,paddingHorizontal=20,background=(0,0,0),foreground=(255,255,255)):
+    def __init__(self,grid:Grid,paddingVertical = 30,paddingHorizontal=20,background=(0,0,0),foreground=(255,255,255)):
         pygame.init()
+        
         self.paddingV = paddingVertical
         self.paddingH = paddingHorizontal
         
-        self.sizeH = size[0]+self.paddingH+self.paddingH
-        self.sizeV = size[1]+self.paddingV+self.paddingV
+        self.grid = grid
+        self.stepV = self.grid.rectHeight+self.grid.margin
+        self.stepH = self.grid.rectWidth+self.grid.margin
+        
+        self.sizeH = grid.sizeH+self.paddingH+self.paddingH+grid.rectWidth
+        self.sizeV = grid.sizeV+self.paddingV+self.paddingV+grid.rectHeight
+        
+        self.fontSize = self.grid.rectWidth
+        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        
         self.screen = pygame.display.set_mode((self.sizeH,self.sizeV))
         self.background = background
         self.foreground = foreground
-        
-        self.stepV = None
-        self.stepH = None
-
-        self.fontSize = None
-        self.font = None # text font
         
         self.endProgram = False
         self.readyToStartAlgorithm = False
         pygame.display.set_caption("My Game")
         self.clock = pygame.time.Clock()
-        
-    def addGrid(self,grid:Grid):
-        """adds grid to the Field
-
-        Args:
-            grid (Grid): grid that holds all nodes
-        """
-        self.grid = grid
-        self.stepV = self.grid.rectHeight+self.grid.margin
-        self.stepH = self.grid.rectWidth+self.grid.margin
-        self.fontSize = self.grid.rectWidth
-        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
     
     def begin(self):
         """starts drawing on screen
@@ -56,7 +47,8 @@ class Field():
                     if event.type == pygame.MOUSEBUTTONDOWN or pygame.MOUSEMOTION:
                         left,middle,right = pygame.mouse.get_pressed()
                         xPos,yPos = pygame.mouse.get_pos()
-                        
+                        if(event.type == pygame.KEYDOWN):
+                            print(f"{xPos} {yPos}")
                         if(utils.isPositionOnGrid(xPos,yPos,self)):
                             xIndex,yIndex = utils.getIndexesOfTile(xPos,yPos,self)
                             #draw obstacle
@@ -90,7 +82,7 @@ class Field():
             for j in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
                 index_y = utils.getYIndexOfTile(j,self)
                 
-                # print(f"Indexes are: {index_x}, {index_y} \n Size of grid: {len(self.grid.grid)}, {len(self.grid.grid)}")
+                # print(f"Indexes: {index_x}, {index_y} \n Size of grid: {len(self.grid.grid[0])}, {len(self.grid.grid)}")
                 if(self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_START):
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_VISITED:

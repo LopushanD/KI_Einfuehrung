@@ -48,7 +48,7 @@ def getIndexesOfTile(x:int,y:int,field)->tuple[int,int]:
     """Takes position mouse cursor and returns index of corresponding tile under it. Recommended to use it with isPositionOnGrid() method, otherwise might lead to Out of Index Exception 
 
     Returns:
-        tuple[int,int]: (horizontal index, vertical index)
+        tuple[int,int]: (horizontal position, vertical position)
     """
     
     index_x = getXIndexOfTile(x,field)
@@ -59,17 +59,17 @@ def getXIndexOfTile(x:int,field)->int:
     """Takes x coordinate and returns index x of corresponding tile under it. This method is not protected from Out of Index Exception 
 
     Returns:
-        int: horizontal index
+        int: horizontal position
     """
-    return max(0,(x-field.paddingH)//field.stepH )
+    return (x-field.paddingH)//field.stepH 
 
 def getYIndexOfTile(y:int,field)->int:
     """Takes y coordinate and returns index y of corresponding tile under it. This method is not protected from Out of Index Exception 
 
     Returns:
-        int: vertical index
+        int: vertical position
     """
-    return max(0,(y-field.paddingV)//field.stepV )
+    return (y-field.paddingV)//field.stepV
 
 def isPositionOnGrid(x:int,y:int,field)->bool:
     isOnGrid_x: bool = x>field.paddingH and x<field.paddingH+field.grid.sizeH
