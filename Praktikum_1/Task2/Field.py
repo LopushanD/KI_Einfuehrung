@@ -77,6 +77,7 @@ class Field():
 
     
     def updateGrid(self):
+        start = time.time()
         for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
             index_x = utils.getXIndexOfTile(i,self)
             for j in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
@@ -95,6 +96,8 @@ class Field():
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 else:
                     pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+        end = time.time()
+        print(f"Time to draw 1 frame: {(end-start)} sec")
         
     def drawNumbers(self):
         """draws numbers on x and y axes
