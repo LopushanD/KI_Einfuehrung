@@ -7,6 +7,12 @@ TO DO
         
         - under column numbers add colors with their label
         
+        - add "simple" GUI configuration mode.
+                * In this mode user needs to only specify number of rows and columns that they want to see.
+                all other parameters will be calculated under the hood.
+        
+                * Current configuration mode will be "advanced". It stays as it is. 
+        
         - write documentation for the program
         
         - upgrade random obstacle generator

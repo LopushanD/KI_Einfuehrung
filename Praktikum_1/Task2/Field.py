@@ -8,7 +8,8 @@ class Field():
     """this class handles all drawing on the screen.
     """
     def __init__(self,grid:Grid,paddingVertical = 30,paddingHorizontal=20,background=(0,0,0),foreground=(255,255,255)):
-        pygame.init()
+        self.pygame = pygame
+        self.pygame.init()
         
         self.paddingV = paddingVertical
         self.paddingH = paddingHorizontal
@@ -21,16 +22,16 @@ class Field():
         self.sizeV = grid.sizeV+self.paddingV+self.paddingV+grid.rectHeight
         
         self.fontSize = self.grid.rectWidth
-        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
         
-        self.screen = pygame.display.set_mode((self.sizeH,self.sizeV))
+        self.screen = self.pygame.display.set_mode((self.sizeH,self.sizeV))
         self.background = background
         self.foreground = foreground
         
         self.endProgram = False
         self.readyToStartAlgorithm = False
-        pygame.display.set_caption("My Game")
-        self.clock = pygame.time.Clock()
+        self.pygame.display.set_caption("My Game")
+        self.clock = self.pygame.time.Clock()
     
     def begin(self):
         """starts drawing on screen
@@ -40,14 +41,14 @@ class Field():
         startSet: bool = False
         goalSet: bool = False
         while not self.endProgram:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            for event in self.pygame.event.get():
+                if event.type == self.pygame.QUIT:
                         self.endProgram = True
                 else:
-                    if event.type == pygame.MOUSEBUTTONDOWN or pygame.MOUSEMOTION:
-                        left,middle,right = pygame.mouse.get_pressed()
-                        xPos,yPos = pygame.mouse.get_pos()
-                        if(event.type == pygame.KEYDOWN):
+                    if event.type == self.pygame.MOUSEBUTTONDOWN or self.pygame.MOUSEMOTION:
+                        left,middle,right = self.pygame.mouse.get_pressed()
+                        xPos,yPos = self.pygame.mouse.get_pos()
+                        if(event.type == self.pygame.KEYDOWN):
                             print(f"{xPos} {yPos}")
                         if(utils.isPositionOnGrid(xPos,yPos,self)):
                             xIndex,yIndex = utils.getIndexesOfTile(xPos,yPos,self)
@@ -70,9 +71,9 @@ class Field():
                                     startSet,goalSet = self._prepareNodesOnGrid(left,right,event.type,xIndex,yIndex,startSet,goalSet)                         
                                     
             self.updateGrid()
-            pygame.display.flip()
+            self.pygame.display.flip()
             self.clock.tick(60)
-        pygame.quit()
+        self.pygame.quit()
         
 
     
@@ -85,17 +86,17 @@ class Field():
                 
                 # print(f"Indexes: {index_x}, {index_y} \n Size of grid: {len(self.grid.grid[0])}, {len(self.grid.grid)}")
                 if(self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_START):
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                    self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_VISITED:
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_VISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                    self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_VISITED,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_OBSTACLE):
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_OBSTACLE,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                    self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_OBSTACLE,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_GOAL):
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_GOAL,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                    self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_GOAL,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 elif(self.grid.grid[index_x][index_y].nodeType == self.grid.grid[index_x][index_y].NODE_BEST_WAY):           
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                    self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 else:
-                    pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
+                    self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
         end = time.time()
         print(f"Time to draw 1 frame: {(end-start)} sec")
         
@@ -110,7 +111,7 @@ class Field():
         while(maxRowNumber//10 >0):
             self.paddingH+=self.fontSize
             maxRowNumber = maxRowNumber//10
-        self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
         
         #draw vertical lines
         for i in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
@@ -124,7 +125,7 @@ class Field():
         maxColNumber = (self.grid.sizeH)//self.stepH
         while self.font.size(str(maxColNumber))[0] > self.grid.rectWidth:
                 self.fontSize = self.fontSize-1
-                self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+                self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
         horizontalOffsetFromCubeLeftBottom = 0
         # draw horizontal numbers
         for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
@@ -134,7 +135,7 @@ class Field():
 
     def _prepareNodesOnGrid(self,left,right,eventType,xPos,yPos,startSet,goalSet)-> tuple[bool,bool]:
         # there's png file, where code is depicted as state machine
-        if left and eventType == pygame.MOUSEBUTTONDOWN:
+        if left and eventType == self.pygame.MOUSEBUTTONDOWN:
             if self.grid.grid[xPos][yPos].nodeType ==self.grid.grid[xPos][yPos].NODE_OBSTACLE:
                 if not startSet:
                     self.grid.grid[xPos][yPos].nodeType = self.grid.grid[xPos][yPos].NODE_START

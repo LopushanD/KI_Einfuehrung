@@ -1,23 +1,29 @@
 import tkinter as tk
 from tkinter import ttk
+from Field import Field,Grid,AStar
 
 class ConfigGUI:
-    def __init__(self):
+    def __init__(self,field:Field,grid:Grid,algorithm:AStar):
         self.root = tk.Tk()
         self.root.title("Grid Configuration")
-
+        
+        self.field = field
+        self.grid = grid
+        self.algorithm = algorithm
+        
         # Default values
         self.defaultConfig = {
             "grid_width": 700,
             "grid_height": 700,
             "tile_width": 18,
             "tile_height": 18,
-            "padding": 20,
+            "paddingH": 20,
+            "paddingV": 20,
             "margin": 2,
             "animation_speed": 2,  # 1 = Slow, 2 = Fast, 3 = Instant, Custom = user-defined
         }
 
-        self.config = self.defaultConfig.copy()
+        # self.config = self.defaultConfig.copy()
         self.sliderUpdateTimer = {}  # Track timers for each slider
 
         # Control variables
@@ -45,7 +51,10 @@ class ConfigGUI:
         # self.tabKeyboard = ttk.Frame(self.notebook)
         # self.notebook.add(self.tabKeyboard, text="Keyboard + Mouse")
         # self.createKeyboardTab(self.tabKeyboard)
-
+        
+        #Draw default grid
+        self.redraw()
+        
         # Start GUI loop
         self.root.mainloop()
 
@@ -58,14 +67,15 @@ class ConfigGUI:
         self.createEntry(frame, "Grid Height", "grid_height", 1)
         self.createEntry(frame, "Tile Width", "tile_width", 2)
         self.createEntry(frame, "Tile Height", "tile_height", 3)
-        self.createEntry(frame, "Padding", "padding", 4)
+        self.createEntry(frame, "Padding Horizontal", "paddingH", 4)
+        self.createEntry(frame, "Padding Vertical", "paddingV", 4)
         self.createEntry(frame, "Margin", "margin", 5)
 
         # Animation Speed
         self.createAnimationSpeed(frame, 6)
 
         # Buttons
-        ttk.Button(frame, text="Start Program", command=self.startProgram).grid(column=0, row=8, columnspan=2, pady=10)
+        ttk.Button(frame, text="Start Program", command=self.finishConfiguration).grid(column=0, row=8, columnspan=2, pady=10)
 
     def createMouseTab(self, parent):
         frame = ttk.Frame(parent, padding="10")
@@ -76,14 +86,15 @@ class ConfigGUI:
         self.createSlider(frame, "Grid Height", "grid_height", 100, 2000, 1)
         self.createSlider(frame, "Tile Width", "tile_width", 5, 100, 2)
         self.createSlider(frame, "Tile Height", "tile_height", 5, 100, 3)
-        self.createSlider(frame, "Padding", "padding", 0, 100, 4)
-        self.createSlider(frame, "Margin", "margin", 0, 20, 5)
+        self.createSlider(frame, "Padding Horizontal", "paddingH", 0, 100, 4)
+        self.createSlider(frame, "Padding Vertical", "paddingV", 0, 100, 5)
+        self.createSlider(frame, "Margin", "margin", 0, 20, 6)
 
         # Animation Speed
-        self.createAnimationSpeed(frame, 6, mouseOnly=True)
+        self.createAnimationSpeed(frame, 7, mouseOnly=True)
 
         # Buttons
-        ttk.Button(frame, text="Start Program", command=self.startProgram).grid(column=0, row=8, columnspan=2, pady=10)
+        ttk.Button(frame, text="Start Program", command=self.finishConfiguration).grid(column=0, row=9, columnspan=2, pady=10)
 
     def createEntry(self, parent, label, key, row):
         ttk.Label(parent, text=label).grid(column=0, row=row, sticky=tk.W)
@@ -157,16 +168,24 @@ class ConfigGUI:
 
     def redraw(self, key=None):
         """Function called whenever any value changes."""
-        if key:
-            print(f"Redrawing triggered by {key}: {self.controlVars[key].get()}")
-        else:
-            print("Redrawing with new config:", {key: var.get() for key, var in self.controlVars.items()})
+        self.grid = Grid(self.controlVars["grid_width"].get(),self.controlVars["grid_height"].get(),self.controlVars["tile_width"].get(),self.controlVars["tile_height"].get(),self.controlVars["margin"].get())
+        self.field = Field(self.grid,self.controlVars["paddingV"].get(),self.controlVars["paddingH"].get())
+        self.field.drawNumbers()
+        self.field.updateGrid()
+        self.field.pygame.display.flip()
+        self.field.clock.tick(60)
+        # if key:
+        #     print(f"Redrawing triggered by {key}: {self.controlVars[key].get()}")
+        # else:
+        #     print("Redrawing with new config:", {key: var.get() for key, var in self.controlVars.items()})
 
-    def startProgram(self):
+    def finishConfiguration(self):
         """Start the program with the current configuration."""
+        self.field.pygame.quit()
+        self.algorithm = AStar(self.grid,self.controlVars["animation_speed"])
         print("Starting program with config:", {key: var.get() for key, var in self.controlVars.items()})
         self.root.destroy()
 
 # Run the GUI
-if __name__ == "__main__":
-    gui = ConfigGUI()
+# if __name__ == "__main__":
+#     gui = ConfigGUI()
