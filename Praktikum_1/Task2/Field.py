@@ -48,8 +48,8 @@ class Field():
                     if event.type == self.pygame.MOUSEBUTTONDOWN or self.pygame.MOUSEMOTION:
                         left,middle,right = self.pygame.mouse.get_pressed()
                         xPos,yPos = self.pygame.mouse.get_pos()
-                        if(event.type == self.pygame.KEYDOWN):
-                            print(f"{xPos} {yPos}")
+                        # if(event.type == self.pygame.KEYDOWN):
+                        #     print(f"{xPos} {yPos}")
                         if(utils.isPositionOnGrid(xPos,yPos,self)):
                             xIndex,yIndex = utils.getIndexesOfTile(xPos,yPos,self)
                             #draw obstacle
@@ -78,7 +78,7 @@ class Field():
 
     
     def updateGrid(self):
-        start = time.time()
+        # start = time.time()
         for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
             index_x = utils.getXIndexOfTile(i,self)
             for j in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
@@ -97,8 +97,8 @@ class Field():
                     self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
                 else:
                     self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,self.pygame.Rect(i,j,self.grid.rectWidth,self.grid.rectHeight))
-        end = time.time()
-        print(f"Time to draw 1 frame: {(end-start)} sec")
+        # end = time.time()
+        # print(f"Time to draw 1 frame: {(end-start)} sec")
         
     def drawNumbers(self):
         """draws numbers on x and y axes

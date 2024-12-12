@@ -4,16 +4,12 @@ import time
 from utils import Queue
     
 class AStar(threading.Thread):
-    def __init__(self,grid:Grid,algorithmSpeed:int):
+    def __init__(self,grid:Grid,stepsPerSecond:int):
         super().__init__()
         
-        self.SPEED_SLOW=1
-        self.SPEED_FAST=2
-        self.SPEED_INSTANT=3
-        
         self.daemon = True
-        self.algorithmSpeed = None
-        self.setAlgorithmSpeed(algorithmSpeed)
+        self.secondsBetweenSteps:float = None
+        self.setAlgorithmSpeed(stepsPerSecond)
         
         self.grid = grid
         self.startNode:Node = None #grid.grid[grid.start[0]][grid.start[1]]
@@ -36,16 +32,12 @@ class AStar(threading.Thread):
         
         self.open.enque(self.startNode)
         
-    def setAlgorithmSpeed(self,speed)->None:
-        if(speed ==self.SPEED_SLOW):
-            self.algorithmSpeed = 0.05
-        elif(speed ==self.SPEED_FAST):
-            self.algorithmSpeed = 0.01
-        elif(speed==self.SPEED_INSTANT):
-            self.algorithmSpeed = 0
+    def setAlgorithmSpeed(self,frequency:int)->None:
+        if(frequency == 0xffffffff):
+            self.secondsBetweenSteps = 0
         else:
-            raise(RuntimeError.add_note("Wrong algorithm speed was given as a parameter"))
-        
+            self.secondsBetweenSteps = 1/frequency
+                
     def run(self):
         self.setStartAndEndPoint()
         self.search()
@@ -59,7 +51,7 @@ class AStar(threading.Thread):
         while self.open.qNotEmpty() and not self.terminate.is_set():
             # print(f"Is set: {self.terminate.is_set()}")
             #just for visualization purposes
-            time.sleep(self.algorithmSpeed)
+            time.sleep(self.pauseBetweenSteps)
 
             currentNode = self.open.deque()
             #don't need to check ways that are obviously worse

@@ -3,11 +3,7 @@ from ConfigGUI import *
 class Controller():
     """This class controlls all other classes. it is also program's entry point
     """
-    def __init__(self):
-        self.SPEED_SLOW=1
-        self.SPEED_FAST=2
-        self.SPEED_INSTANT=3
-        
+    def __init__(self):        
         self.field:Field = None
         self.grid:Grid = None
         self.algorithm:AStar = None
@@ -17,6 +13,9 @@ class Controller():
     def preparingParametersGUIDialog(self):
         """Set all parameters for field,grid and algorithm using GUI"""
         self.configGUI = ConfigGUI(self.field,self.grid,self.algorithm)
+        self.field = self.configGUI.field
+        self.grid = self.configGUI.grid
+        self.algorithm = self.configGUI.algorithm
     def killOrRestartAlgorithmThread(self):
         """Used for interrupting thread with A* algorithm. Otherwise it will run on the background until it finishes
         """
@@ -25,9 +24,9 @@ class Controller():
             while not self.field.readyToStartAlgorithm:
                 continue
             # start/rerun thread. In case of rerunning, it cannot be done directly, so we need to create new instance
-            oldSpeed = self.algorithm.algorithmSpeed
-            self.algorithm = AStar(self.grid,self.SPEED_INSTANT) # speed here is just placeholder
-            self.algorithm.algorithmSpeed = oldSpeed
+            oldSpeed = self.algorithm.pauseBetweenSteps
+            self.algorithm = AStar(self.grid,1) # speed here is just placeholder
+            self.algorithm.pauseBetweenSteps = oldSpeed
             self.algorithm.start()
             # wait until user closes the window or resets everything
             while self.field.readyToStartAlgorithm and not self.field.endProgram:

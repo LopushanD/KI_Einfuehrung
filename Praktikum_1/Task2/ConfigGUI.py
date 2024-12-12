@@ -137,12 +137,12 @@ class ConfigGUI:
         speedFrame = ttk.Frame(parent)
         speedFrame.grid(column=1, row=row, sticky=tk.W)
 
-        ttk.Radiobutton(speedFrame, text="Slow", variable=speedVar, value=1, command=lambda: self.disableCustomSpeed(customSpeedWidget)).pack(side=tk.LEFT)
-        ttk.Radiobutton(speedFrame, text="Fast", variable=speedVar, value=2, command=lambda: self.disableCustomSpeed(customSpeedWidget)).pack(side=tk.LEFT)
-        ttk.Radiobutton(speedFrame, text="Instant", variable=speedVar, value=3, command=lambda: self.disableCustomSpeed(customSpeedWidget)).pack(side=tk.LEFT)
+        ttk.Radiobutton(speedFrame, text="Slow", variable=speedVar, value=20, command=lambda: self.disableCustomSpeed(customSpeedWidget)).pack(side=tk.LEFT)
+        ttk.Radiobutton(speedFrame, text="Fast", variable=speedVar, value=100, command=lambda: self.disableCustomSpeed(customSpeedWidget)).pack(side=tk.LEFT)
+        ttk.Radiobutton(speedFrame, text="Instant", variable=speedVar, value=0xffffffff, command=lambda: self.disableCustomSpeed(customSpeedWidget)).pack(side=tk.LEFT)
 
         if mouseOnly:
-            customSpeedWidget = self.createSlider(parent,"","animation_speed",1,100,row+1)
+            customSpeedWidget = self.createSlider(parent,"","animation_speed",1,2000,row+1)
             # customSpeedWidget = ttk.Scale(
             #     parent, from_=1, to=1000, orient=tk.HORIZONTAL, variable=self.controlVars["animation_speed"]
             # )
@@ -153,7 +153,7 @@ class ConfigGUI:
             speedFrame,
             text="Custom",
             variable=speedVar,
-            value=4,
+            value=None,
             command=lambda: customSpeedWidget.configure(state="normal"),
         ).pack(side=tk.LEFT)
 
@@ -181,9 +181,9 @@ class ConfigGUI:
 
     def finishConfiguration(self):
         """Start the program with the current configuration."""
-        self.field.pygame.quit()
-        self.algorithm = AStar(self.grid,self.controlVars["animation_speed"])
-        print("Starting program with config:", {key: var.get() for key, var in self.controlVars.items()})
+        # self.field.pygame.quit()
+        self.algorithm = AStar(self.grid,self.controlVars["animation_speed"].get())
+        # print("Starting program with config:", {key: var.get() for key, var in self.controlVars.items()})
         self.root.destroy()
 
 # Run the GUI
