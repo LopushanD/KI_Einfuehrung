@@ -6,7 +6,7 @@ class ConfigGUI:
     def __init__(self,field:Field,grid:Grid,algorithm:AStar):
         self.root = tk.Tk()
         self.root.title("Grid Configuration")
-        
+        self.root.protocol("WM_DELETE_WINDOW",self.closeWindow)
         self.field = field
         self.grid = grid
         self.algorithm = algorithm
@@ -184,6 +184,10 @@ class ConfigGUI:
         # self.field.pygame.quit()
         self.algorithm = AStar(self.grid,self.controlVars["animation_speed"].get())
         # print("Starting program with config:", {key: var.get() for key, var in self.controlVars.items()})
+        self.root.destroy()
+        
+    def closeWindow(self):
+        self.field.pygame.quit()
         self.root.destroy()
 
 # Run the GUI

@@ -39,11 +39,13 @@ class Controller():
 if __name__ == '__main__':
     game = Controller()
     game.preparingParametersGUIDialog()
-    # game.setGridSizeDialog()
-    # game.setAnimationSpeedDialog()
+    try:
+        game.field.pygame.mouse.set_visible(True)
+    except:
+        quit("seems like application was closed during configuration of parameters")
+    # Algorithm runs in another background thread
     algorithmThreadHandler = threading.Thread(target=game.killOrRestartAlgorithmThread)
-    #configure this thread to be a daemon, so that it closes automatically when main thread is closed.
+    # configure this thread to be a daemon, so that it closes automatically when main thread is closed.
     algorithmThreadHandler.daemon = True
     algorithmThreadHandler.start()
-    pygame.mouse.set_visible(True)
     game.field.begin()
