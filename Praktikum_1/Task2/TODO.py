@@ -2,10 +2,14 @@
 """
 TO DO
         
-        - make GUI that can be used with mouse only
-                * while configuring you see field with grid as it will be. It changes dynamically
+        - add more information on the field
         
-        - under column numbers add colors with their label
+                * under column numbers add colors with their label
+                
+                * When user interrupts algorithm, its written with text
+                
+                * When path is not found, user is informed about that
+        
         
         - add "simple" GUI configuration mode.
                 * In this mode user needs to only specify number of rows and columns that they want to see.

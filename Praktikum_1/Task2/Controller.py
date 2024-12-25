@@ -24,9 +24,9 @@ class Controller():
             while not self.field.readyToStartAlgorithm:
                 continue
             # start/rerun thread. In case of rerunning, it cannot be done directly, so we need to create new instance
-            oldSpeed = self.algorithm.pauseBetweenSteps
+            oldSpeed = self.algorithm.secondsBetweenSteps
             self.algorithm = AStar(self.grid,1) # speed here is just placeholder
-            self.algorithm.pauseBetweenSteps = oldSpeed
+            self.algorithm.secondsBetweenSteps = oldSpeed
             self.algorithm.start()
             # wait until user closes the window or resets everything
             while self.field.readyToStartAlgorithm and not self.field.endProgram:

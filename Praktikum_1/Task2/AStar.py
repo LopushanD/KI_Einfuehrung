@@ -51,7 +51,7 @@ class AStar(threading.Thread):
         while self.open.qNotEmpty() and not self.terminate.is_set():
             # print(f"Is set: {self.terminate.is_set()}")
             #just for visualization purposes
-            time.sleep(self.pauseBetweenSteps)
+            time.sleep(self.secondsBetweenSteps)
 
             currentNode = self.open.deque()
             #don't need to check ways that are obviously worse

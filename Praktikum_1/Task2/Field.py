@@ -133,6 +133,7 @@ class Field():
             self.screen.blit(textH,(i+horizontalOffsetFromCubeLeftBottom,self.grid.sizeV+self.paddingV+self.grid.rectHeight//2))
             counter+=1
 
+
     def _prepareNodesOnGrid(self,left,right,eventType,xPos,yPos,startSet,goalSet)-> tuple[bool,bool]:
         # there's png file, where code is depicted as state machine
         if left and eventType == self.pygame.MOUSEBUTTONDOWN:
