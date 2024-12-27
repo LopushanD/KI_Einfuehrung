@@ -2,10 +2,11 @@
 """
 TO DO
         
+        - review responsibilities of Field and DrawingInformationHolder classes. If needed adjust their code accordingly
+                * also refactor both classes        
+           
         - add more information on the field
-        
-                * under column numbers add colors with their label
-                
+                        
                 * When user interrupts algorithm, its written with text
                 
                 * When path is not found, user is informed about that

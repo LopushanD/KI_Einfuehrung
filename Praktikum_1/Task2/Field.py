@@ -1,6 +1,7 @@
 import pygame
 from Grid import *
 from AStar import *
+from DrawingInformationHolder import *
 import utils
         
 # field is where our drawing takes place
@@ -18,11 +19,13 @@ class Field():
         self.stepV = self.grid.rectHeight+self.grid.margin
         self.stepH = self.grid.rectWidth+self.grid.margin
         
-        self.sizeH = grid.sizeH+self.paddingH+self.paddingH+grid.rectWidth
-        self.sizeV = grid.sizeV+self.paddingV+self.paddingV+grid.rectHeight
-        
         self.fontSize = self.grid.rectWidth
         self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
+        
+        self.drawInformation = DrawingInformationHolder(self.grid,self.fontSize,paddingVertical,paddingHorizontal)
+        
+        self.sizeH = self.drawInformation.structure['fieldEndPosH']
+        self.sizeV = self.drawInformation.structure['fieldEndPosV']
         
         self.screen = self.pygame.display.set_mode((self.sizeH,self.sizeV))
         self.background = background
@@ -37,6 +40,7 @@ class Field():
         """starts drawing on screen
         """
         self.screen.fill(self.background)
+        self.drawNodeLegend()
         self.drawNumbers()
         startSet: bool = False
         goalSet: bool = False
@@ -79,9 +83,9 @@ class Field():
     
     def updateGrid(self):
         # start = time.time()
-        for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
+        for i in range(self.drawInformation.gridTiles["beginPosH"],self.drawInformation.gridTiles["endPosH"],self.stepH):
             index_x = utils.getXIndexOfTile(i,self)
-            for j in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
+            for j in range(self.drawInformation.gridTiles["beginPosV"],self.drawInformation.gridTiles["endPosV"],self.stepV):
                 index_y = utils.getYIndexOfTile(j,self)
                 
                 # print(f"Indexes: {index_x}, {index_y} \n Size of grid: {len(self.grid.grid[0])}, {len(self.grid.grid)}")
@@ -106,33 +110,63 @@ class Field():
         #counter is a number drawn. For vertical numbers it goes from maximum to zero, for horizontal from zero to maximum
         counter = (self.grid.sizeV)//self.stepV
         
-        verticalOffsetFromCubeLeftBottom = 0 #self.fontSize//4
-        maxRowNumber = counter
-        while(maxRowNumber//10 >0):
-            self.paddingH+=self.fontSize
-            maxRowNumber = maxRowNumber//10
-        self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
-        
         #draw vertical lines
-        for i in range(self.paddingV,self.grid.sizeV+self.paddingV,self.stepV):
+        for i in range(self.drawInformation.numbersV['beginPosV'],self.drawInformation.numbersV['endPosV'],self.stepV):
             textV = self.font.render(str(counter), True, self.foreground,self.background)
             
-            self.screen.blit(textV,((self.stepH)//2,i+verticalOffsetFromCubeLeftBottom))
+            self.screen.blit(textV,(self.drawInformation.numbersV['beginPosH'],i))
             counter-=1
         counter=1
         
         #setup correct font size for horizontal numbers, so that everything fits
         maxColNumber = (self.grid.sizeH)//self.stepH
+        fontTmp = self.fontSize
         while self.font.size(str(maxColNumber))[0] > self.grid.rectWidth:
-                self.fontSize = self.fontSize-1
-                self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
-        horizontalOffsetFromCubeLeftBottom = 0
+            fontTmp = fontTmp-1
+            self.font = self.pygame.font.Font('freesansbold.ttf', fontTmp)
         # draw horizontal numbers
-        for i in range(self.paddingH,self.grid.sizeH+self.paddingH,self.stepH):
+        for i in range(self.drawInformation.numbersH['beginPosH'],self.drawInformation.numbersH['endPosH'],self.stepH):
             textH = self.font.render(str(counter), True,self.foreground, self.background)                        
-            self.screen.blit(textH,(i+horizontalOffsetFromCubeLeftBottom,self.grid.sizeV+self.paddingV+self.grid.rectHeight//2))
+            self.screen.blit(textH,(i,self.drawInformation.numbersH['beginPosV']))
+        
             counter+=1
+        self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
 
+
+    def drawNodeLegend(self):
+        horizontalOffsetFromCubeLeftBottom = 0
+        
+        drawPosV = self.drawInformation.legendTile['beginPosV']
+        drawPosH = self.drawInformation.legendTile['beginPosH']
+        
+        legendRectWidth = self.grid.rectWidth*4
+        addToOffset = legendRectWidth+self.grid.rectWidth
+        self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_START,self.pygame.Rect(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,self.grid.rectHeight))
+        horizontalOffsetFromCubeLeftBottom+= addToOffset
+        self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_VISITED,self.pygame.Rect(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,self.grid.rectHeight))
+        horizontalOffsetFromCubeLeftBottom+= addToOffset
+        self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_OBSTACLE,self.pygame.Rect(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,self.grid.rectHeight))
+        horizontalOffsetFromCubeLeftBottom+= addToOffset
+        self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_GOAL,self.pygame.Rect(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,self.grid.rectHeight))
+        horizontalOffsetFromCubeLeftBottom+= addToOffset
+        self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_BEST_WAY,self.pygame.Rect(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,self.grid.rectHeight))
+        horizontalOffsetFromCubeLeftBottom+= addToOffset
+        self.pygame.draw.rect(self.screen,self.grid.COLOR_NODE_UNVISITED,self.pygame.Rect(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,self.grid.rectHeight))
+        horizontalOffsetFromCubeLeftBottom+= addToOffset
+        
+        drawPosV = self.drawInformation.legendTileLabel['beginPosV']
+        textFieldHeight = self.drawInformation.legendTileLabel['beginPosV'] - self.drawInformation.legendTileLabel['endPosV']
+        horizontalOffsetFromCubeLeftBottom = 0
+        fontTmp = 12
+        self.font = self.pygame.font.Font('freesansbold.ttf', fontTmp)
+        texts = ["start node","visited node","obstacle node","goal node", "best way node", "unvisited node"]
+        for text in texts:                        
+            tmp = self.font.render(text, True,self.foreground, self.background)
+            self.screen.blit(tmp,(drawPosH+horizontalOffsetFromCubeLeftBottom,drawPosV,legendRectWidth,textFieldHeight))
+            horizontalOffsetFromCubeLeftBottom+= addToOffset
+        self.font = self.pygame.font.Font('freesansbold.ttf', self.fontSize)
+        
+            
 
     def _prepareNodesOnGrid(self,left,right,eventType,xPos,yPos,startSet,goalSet)-> tuple[bool,bool]:
         # there's png file, where code is depicted as state machine

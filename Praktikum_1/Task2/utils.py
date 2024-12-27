@@ -61,7 +61,7 @@ def getXIndexOfTile(x:int,field)->int:
     Returns:
         int: horizontal position
     """
-    return (x-field.paddingH)//field.stepH 
+    return (x-field.drawInformation.gridTiles["beginPosH"])//field.stepH 
 
 def getYIndexOfTile(y:int,field)->int:
     """Takes y coordinate and returns index y of corresponding tile under it. This method is not protected from Out of Index Exception 
@@ -69,9 +69,9 @@ def getYIndexOfTile(y:int,field)->int:
     Returns:
         int: vertical position
     """
-    return (y-field.paddingV)//field.stepV
+    return (y-field.drawInformation.gridTiles["beginPosV"])//field.stepV
 
 def isPositionOnGrid(x:int,y:int,field)->bool:
-    isOnGrid_x: bool = x>field.paddingH and x<field.paddingH+field.grid.sizeH
-    isOnGrid_y: bool = y>field.paddingV and y<field.paddingV+field.grid.sizeV
+    isOnGrid_x: bool = x>field.drawInformation.gridTiles['beginPosH'] and x<field.drawInformation.gridTiles['endPosH']
+    isOnGrid_y: bool = y>field.drawInformation.gridTiles['beginPosV'] and y<field.drawInformation.gridTiles['endPosV']
     return isOnGrid_x and isOnGrid_y

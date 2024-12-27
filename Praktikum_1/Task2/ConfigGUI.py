@@ -171,6 +171,7 @@ class ConfigGUI:
         self.grid = Grid(self.controlVars["grid_width"].get(),self.controlVars["grid_height"].get(),self.controlVars["tile_width"].get(),self.controlVars["tile_height"].get(),self.controlVars["margin"].get())
         self.field = Field(self.grid,self.controlVars["paddingV"].get(),self.controlVars["paddingH"].get())
         self.field.drawNumbers()
+        self.field.drawNodeLegend()
         self.field.updateGrid()
         self.field.pygame.display.flip()
         self.field.clock.tick(60)
